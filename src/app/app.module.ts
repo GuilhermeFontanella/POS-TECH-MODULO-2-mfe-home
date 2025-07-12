@@ -3,8 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
-import { NavbarComponent } from './navbar/navbar.component';
-import { LateralMenuComponent } from './lateral-menu/lateral-menu.component';
+
 
 @NgModule({
   declarations: [
@@ -12,9 +11,7 @@ import { LateralMenuComponent } from './lateral-menu/lateral-menu.component';
   ],
   imports: [
     BrowserModule,
-    RouterModule,
-    NavbarComponent,
-    LateralMenuComponent
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]
