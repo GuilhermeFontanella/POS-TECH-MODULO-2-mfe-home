@@ -4,7 +4,7 @@ module.exports = withModuleFederationPlugin({
   name: 'mfeHome',
   filename: 'remoteEntry.js',
   exposes: {
-    
+    './HomeComponent': './src/app/home/home.component.ts',
   },
 
   shared: {

@@ -1,0 +1,65 @@
+<nz-card class="newTransactionCard">
+  <div>
+    <div class="newTransHeader">
+      <h2 nz-typography>Nova Transação</h2>
+      <img src="http://localhost:4202/assets/Pixels3.png" alt="pixels" />
+    </div>
+  </div>
+  <div class="newTransForm">
+    <div class="formContent">
+      <div class="custom-select-wrapper" (click)="toggleDropdown()">
+        <div class="custom-select" [class.open]="isDropdownOpen">
+          <span class="selected-text">{{selectedOption || 'Selecione o tipo de transação'}}</span>
+          <div class="select-arrow" [class.rotated]="isDropdownOpen">
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+              <path d="M1 1L5 5L9 1" fill="#004D61"/>
+            </svg>
+          </div>
+        </div>
+        
+        <div class="dropdown-options" [class.show]="isDropdownOpen">
+          <div class="option" 
+               [class.selected]="selectedType === 'cambio'"
+               (click)="selectOption('cambio', 'Transferência', $event)">
+            Câmbio de Moeda
+          </div>
+          <div class="option" 
+               [class.selected]="selectedType === 'docted'"
+               (click)="selectOption('docted', 'Transferência', $event)">
+            DOC/TED
+          </div>
+          <div class="option" 
+               [class.selected]="selectedType === 'emprestimo'"
+               (click)="selectOption('emprestimo', 'Deposito', $event)">
+            Empréstimo e Financiamento
+          </div>
+        </div>
+      </div>
+
+      <select style="display: none;" [(ngModel)]="selectedType" name="tipoTransacao">
+        <option value="cambio">Câmbio de Moeda</option>
+        <option value="docted">DOC/TED</option>
+        <option value="emprestimo">Empréstimo e Financiamento</option>
+      </select>
+      <div class="input-container"> 
+        <Label class="label-field" nz-typography>Valor</Label>
+        <input
+          class="input-field__number"
+          [(ngModel)]="formattedValue"
+          (input)="onValueChange($event)"
+          (focus)="onFocus()"
+          (blur)="onBlur()"
+          type="text"
+          placeholder="00,00"
+          name="valor"
+        />
+      </div>
+
+      <button class="btn-primary" (click)="addTransaction()">
+        Concluir transação
+      </button>
+    </div>
+
+    <img src="http://localhost:4202/assets/Pixels4.png" alt="pixels" />
+  </div>
+</nz-card>

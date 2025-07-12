@@ -1,0 +1,9 @@
+<div [ngClass]="screenType !== 'desktop' ? 'mobileLayout' : 'desktopLayout'">
+    <div style="width: 100%;">
+        <app-welcome-card></app-welcome-card>
+        <app-new-transaction-card></app-new-transaction-card>
+    </div>
+    <div style="background-color: #e4ede3;">
+        <app-extrato></app-extrato>
+    </div>
+</div>

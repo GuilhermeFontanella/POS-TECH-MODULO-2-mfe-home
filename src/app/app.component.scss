@@ -1,0 +1,18 @@
+:host::ng-deep .ant-layout-header {
+    background-color: #e4ede3;
+}
+
+.pageContent {
+    margin-top: 32px;
+    min-height: calc(100vh - 96px);
+    background-color: #e4ede3;
+}
+.mobile {
+  border-radius: 8px;
+  min-height: 480px !important;
+  min-width: 312px !important;
+  width: 96%;
+  box-sizing: border-box;
+  background-color: #e4ede3;
+  margin: 1rem;
+}

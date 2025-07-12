@@ -1,0 +1,45 @@
+.welcomeCard {
+    min-height: 302px;
+    background-color: #004D61;
+    border-radius: 8px;
+    h2[nz-typography],
+    h3[nz-typography],
+    span[nz-typography] {
+        color: #FFF;
+    }
+    margin: 16px 16px;
+}
+
+.accountInfo {
+    display: flex; 
+    flex-direction: column; 
+    align-items: end;
+}
+
+.ammountInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+:host::ng-deep .ant-btn {
+    background: transparent !important;
+    border: none;
+}
+
+.btn {
+    color: #FF5031;
+    margin-bottom: 0.5em;
+}
+
+.divider {
+    background-color: #FF5031;
+    margin-top: -8px;
+    margin-bottom: 8px;
+    min-width: 155px !important;
+}
+
+.showAmmountButton {
+    gap: 16px;
+    display: flex;
+    align-items: center;
+}

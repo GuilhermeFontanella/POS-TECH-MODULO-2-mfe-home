@@ -1,0 +1,25 @@
+<nz-card class="welcomeCard">
+    <div>
+        <div>
+            <h2 nz-typography>Olá, {{userData?.name}}! :)</h2>
+        </div>
+        <div>
+            <span nz-typography>{{todayDate | date:'EEEE, dd/MM/yyyy':'':'pt-BR'}}</span>
+        </div>
+    </div>
+    <div class="accountInfo">
+        <div>
+            <div class="showAmmountButton">
+                <h3 nz-typography>Saldo</h3>
+                <button class="btn" nz-button nzType="primary" nzSize="large" nzShape="circle" (click)="hideAmmount()">
+                    <span nz-icon nzTheme="fill" [nzType]="!showAmmount ? 'eye-invisible' : 'eye'"></span>
+                </button>
+            </div>
+            <nz-divider class="divider"></nz-divider>
+            <div class="ammountInfo">
+                <span nz-typography>Conta Corrente</span>
+                <span nz-typography style="font-size: 31px;">{{ showAmmount ? (totalAmmount | currency: 'R$') : 'R$ *******'}}</span>
+            </div>
+        </div>
+    </div>
+</nz-card>
