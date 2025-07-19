@@ -11,6 +11,9 @@
    min-width: 282px;
    width: 96%;
    box-sizing: border-box;
+  max-height: 115vh;   
+  overflow-y: auto;   
+  padding-right: 10px;
  }
 
  .modal-content {
