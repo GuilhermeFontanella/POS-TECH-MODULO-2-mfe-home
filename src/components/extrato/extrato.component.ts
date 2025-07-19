@@ -112,6 +112,16 @@ export class ExtratoComponent implements OnInit, OnDestroy {
     }
   }
 
+  public formatCurrencyBRL(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  }
+
+  public formatDateBR(dateInput: string | number): string {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('pt-BR');
+  }
+
   private getTransactionById(transactionId: number): Transaction | undefined {
     return this.transactions.find(t => t.id === transactionId);
   }

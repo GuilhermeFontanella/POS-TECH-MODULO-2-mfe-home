@@ -73,4 +73,14 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
   hideAmmount() {
     this.showAmmount = !this.showAmmount;
   }
+
+  public formatCurrencyBRL(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  }
+
+  public formatDateBR(dateInput: string | number): string {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('pt-BR');
+  }
 }

@@ -99,6 +99,7 @@
 						"tsConfig": "tsconfig.spec.json",
 						"inlineStyleLanguage": "scss",
 						"assets": [
+							"node_modules/bootstrap-icons/font/bootstrap-icons.css",
 							"src/favicon.ico",
 							"src/assets"
 						],

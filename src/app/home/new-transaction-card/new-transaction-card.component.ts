@@ -105,7 +105,7 @@ export class NewTransactionCardComponent {
       description: this.selectedOption,
       date: date,
       type: this.selectedType as 'income' | 'expense',
-      amount: this.selectedType === 'income'
+      amount: this.selectedType === 'emprestimo'
         ? Math.abs(this.value)
         : -Math.abs(this.value)
     };
