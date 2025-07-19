@@ -7,7 +7,8 @@ import { map, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class TransactionService {
-  private apiUrl = 'http://localhost:3000/transactions';
+  private apiUrl = 'https://68787cb963f24f1fdc9e28af.mockapi.io/transactions'
+  // 'http://localhost:3000/transactions';
   
   private transactionsSubject = new BehaviorSubject<any[]>([]);
   public transactions$ = this.transactionsSubject.asObservable();
