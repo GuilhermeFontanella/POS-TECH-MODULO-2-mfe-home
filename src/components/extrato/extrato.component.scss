@@ -24,6 +24,10 @@
   gap: 1rem;
 }
 
+.img-white {
+  filter: brightness(0) invert(1);
+}
+
 .modal-actions {
   display: flex;
   gap: 1rem;

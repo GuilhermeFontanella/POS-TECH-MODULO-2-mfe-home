@@ -1,7 +1,7 @@
 <nz-card class="welcomeCard">
     <div>
         <div>
-            <h2 nz-typography>Olá, {{userData?.name}}! :)</h2>
+            <h2 nz-typography>Olá, Manoel! :)</h2>
         </div>
         <div>
             <span nz-typography>{{todayDate | date:'EEEE, dd/MM/yyyy':'':'pt-BR'}}</span>
@@ -18,7 +18,7 @@
             <nz-divider class="divider"></nz-divider>
             <div class="ammountInfo">
                 <span nz-typography>Conta Corrente</span>
-                <span nz-typography style="font-size: 31px;">{{ showAmmount ? (totalAmmount | currency: 'R$') : 'R$ *******'}}</span>
+                <span nz-typography style="font-size: 31px;">{{ showAmmount ? formatCurrencyBRL(totalAmmount) : 'R$ *******'}}</span>
             </div>
         </div>
     </div>

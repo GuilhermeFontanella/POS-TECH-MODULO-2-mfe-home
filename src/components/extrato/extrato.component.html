@@ -23,12 +23,13 @@
               <div>
                 <button class="btn btn-outline-warning btn-sm me-1 button"
                   (click)="openEditModal(transaction.id, item, transaction.month)">
-                  <i class="bi bi-pencil icon"></i></button>
+                  <img src="http://localhost:4202/assets/pencil.svg" alt="trash" class="img-white"/></button>
               </div>
               <div>
                 <button class="btn btn-outline-danger btn-sm button margem"
                   (click)="deleteCategoria(transaction.id, item.id)">
-                  <i class="bi bi-trash icon"></i></button>
+                  <img src="http://localhost:4202/assets/trash.svg" alt="trash" class="img-white"/></button>
+
               </div>
             </div>
             <p class="date">{{ formatDateBR(item.date) }}</p>
