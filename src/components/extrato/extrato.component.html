@@ -11,14 +11,13 @@
           <select id="filterType" [(ngModel)]="filters.type" name="type">
             <option value="">Todos</option>
             <option value="income">Depósito</option>
-            <option value="expense">Despesa</option>
             <option value="transfer">Transferência</option>
           </select>
         </div>
       </div>
       <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary">🔍</button>
-        <button type="button" class="btn btn-secondary button-row">🧹</button>
+        <button type="button" class="btn btn-secondary button-row" (click)="clearFilters()">🧹</button>
       </div>
     </div>
   </form>
@@ -33,43 +32,43 @@
   </div>
 
   <div class="scroll-container">
-    <div *ngFor="let transaction of transactions">
-      <div class="list">
-      </div>
-      <div class="row description">
-        <div class="col-sm-12" *ngIf="transaction.categoria.length > 0">
-          <h3 class="transaction-date">{{ transaction.month | titlecase }} </h3>
-        </div>
-      </div>
-      <div *ngFor="let item of transaction.categoria; trackBy: trackByCategoriaId">
+    <ng-container *ngIf="filteredTransactions.length > 0; else noResults">
+      <div *ngFor="let transaction of filteredTransactions">
         <div class="row description">
-          <div class="col-sm-12">
-            <h5 class="transaction-description text">{{ item.description }}</h5>
-            <p class="transaction-amount value">
-              {{ formatCurrencyBRL(item.amount) }}
-            </p>
-          </div>
-          <div class="col-sm-8">
-            <div class="aline-button">
-              <div>
-                <button class="btn btn-outline-warning btn-sm me-1 button"
-                  (click)="openEditModal(transaction.id, item, transaction.month)">
-                  <img src="http://localhost:4202/assets/pencil.svg" alt="pencil" class="img-white" /></button>
-              </div>
-              <div>
-                <button class="btn btn-outline-danger btn-sm button margem"
-                  (click)="deleteCategoria(transaction.id, item.id)">
-                  <img src="http://localhost:4202/assets/trash.svg" alt="trash" class="img-white" /></button>
-              </div>
-            </div>
-            <p class="date">{{ formatDateBR(item.date) }}</p>
+          <div class="col-sm-12" *ngIf="transaction.categoria.length > 0">
+            <h3 class="transaction-date">{{ transaction.month | titlecase }} </h3>
           </div>
         </div>
-        <div class="col-sm-12">
-          <div class="line"></div>
+        <div *ngFor="let item of transaction.categoria; trackBy: trackByCategoriaId">
+          <div class="row description">
+            <div class="col-sm-12">
+              <h5 class="transaction-description text">{{ item.description }}</h5>
+              <p class="transaction-amount value">
+                {{ formatCurrencyBRL(item.amount) }}
+              </p>
+            </div>
+            <div class="col-sm-8">
+              <div class="aline-button">
+                <div>
+                  <button class="btn btn-outline-warning btn-sm me-1 button"
+                    (click)="openEditModal(transaction.id, item, transaction.month)">
+                    <img src="http://localhost:4202/assets/pencil.svg" alt="pencil" class="img-white" /></button>
+                </div>
+                <div>
+                  <button class="btn btn-outline-danger btn-sm button margem"
+                    (click)="deleteCategoria(transaction.id, item.id)">
+                    <img src="http://localhost:4202/assets/trash.svg" alt="trash" class="img-white" /></button>
+                </div>
+              </div>
+              <p class="date">{{ formatDateBR(item.date) }}</p>
+            </div>
+          </div>
+          <div class="col-sm-12">
+            <div class="line"></div>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
   </div>
 </section>
 <ng-template #noResults>

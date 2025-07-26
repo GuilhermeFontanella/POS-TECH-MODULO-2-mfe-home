@@ -40,14 +40,8 @@ export class ExtratoComponent implements OnInit, OnDestroy {
 
   filters = {
     date: '',
-    type: '',
-    minAmount: null,
-    maxAmount: null,
-    description: ''
+    type: ''
   };
-
-
-
 
   constructor(
     private transactionService: TransactionService,
@@ -68,17 +62,15 @@ export class ExtratoComponent implements OnInit, OnDestroy {
     this.items = Array.from({ length: 50 }, (_, i) => `Item ${i + 1}`);
     this.filteredTransactions = [...this.transactions];
 
-    this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
-      this.filters.description = searchTerm;
-      this.applyFilters();
-    });
-    this.editForm = this.fb.group({
-      description: [''],
-      type: [''],
-      amount: [''],
-      date: [''],
-      month: ['']
-    });
+    this.transactionService.getTransactions().subscribe({
+    next: (data) => {
+      this.transactions = data;
+      this.filteredTransactions = [...this.transactions]; 
+    },
+    error: () => {
+      this.mensagemErro = 'Erro ao carregar transações.';
+    }
+  });
   }
 
   ngOnDestroy(): void {
@@ -95,35 +87,36 @@ export class ExtratoComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
-  applyFilters() {
-    const { date, type, minAmount, maxAmount, description } = this.filters;
-
-    this.filteredTransactions = this.transactions
-      .map(t => {
-        const filteredCategoria = t.categoria.filter((item: any) => {
-          const matchesDate = date ? item.date === date : true;
-          const matchesType = type ? item.type === type : true;
-          const matchesMin = minAmount != null ? item.amount >= minAmount : true;
-          const matchesMax = maxAmount != null ? item.amount <= maxAmount : true;
-          const matchesDesc = description
-            ? item.description.toLowerCase().includes(description.toLowerCase())
-            : true;
-          return matchesDate && matchesType && matchesMin && matchesMax && matchesDesc;
-        });
-
-        return { ...t, categoria: filteredCategoria };
-      })
-      .filter(t => t.categoria.length > 0);
+  applyFilters(event?: Event) {
+    if (event) {
+    event.preventDefault();
   }
+  const { date, type} = this.filters;
+  const filterDate = date ? new Date(date).toISOString().slice(0, 10) : null;
+
+  this.filteredTransactions = this.transactions
+    .map(t => {
+      const filteredCategoria = t.categoria.filter((item: any) => {
+        const itemDateStr = item.date ? new Date(item.date).toISOString().slice(0, 10) : '';
+
+        const matchesDate = filterDate ? itemDateStr === filterDate : true;
+        const matchesType = type ? item.type === type : true;
+
+        return matchesDate && matchesType;
+      });
+
+      return { ...t, categoria: filteredCategoria };
+    })
+    .filter(t => t.categoria.length > 0);
+}
+
+
 
 
   clearFilters() {
     this.filters = {
       date: '',
-      type: '',
-      minAmount: null,
-      maxAmount: null,
-      description: ''
+      type: ''
     };
     this.filteredTransactions = [...this.transactions];
   }
@@ -133,6 +126,7 @@ export class ExtratoComponent implements OnInit, OnDestroy {
     this.transactionsSubscription = this.transactionService.transactions$.subscribe({
       next: (data) => {
         this.transactions = data;
+        this.filteredTransactions = [...data];
         this.mensagemErro = '';
         console.log('ExtratoComponent initialized', this.transactions);
       },
