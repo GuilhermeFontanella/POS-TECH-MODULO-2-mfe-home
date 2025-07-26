@@ -7,11 +7,10 @@
    margin-top: 1rem;
    background: #F5F5F5;
    border-radius: 8px;
-   min-height: 512px !important;
    min-width: 282px;
    width: 96%;
    box-sizing: border-box;
-  max-height: 115vh;   
+   min-height: calc(100vh - 96px);  
   overflow-y: auto;   
   padding-right: 10px;
  }
@@ -47,7 +46,7 @@
      font-size: 25px;
      font-weight: 700;
      color: #000000;
-     margin-bottom: 2rem;
+     margin-bottom: 1rem;
    }
  }
 
@@ -71,22 +70,9 @@
   cursor: pointer;
  }
 
- .icon {
-   color: #FFFFFF;
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   font-size: 25px;
- }
-
  .margem {
    margin-left: 0.5rem;
  }
-
- .margem-data {
-   margin-left: 1rem;
- }
-
  .aline-button {
    min-width: 110px;
    display: flex;
@@ -149,6 +135,51 @@
   align-items: center;
   justify-content: center;
 }
+
+.no-results {
+  padding: 2rem;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #f6f9f9;
+  padding: 0.3rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.filters-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+.button-row {
+  margin-left: 8px;
+}
+
+.scroll-container {
+  height: 85vh;     
+  overflow-y: auto;        
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 0;
+}
+
 
 
 
