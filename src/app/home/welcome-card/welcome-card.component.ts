@@ -39,6 +39,7 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
   checkTotalAmmount$ = new Subscription();
   userAccountInfo$ = new Subscription();
   alertaMensagem$!: Observable<string>;
+  saldoMensal: number = 0;
 
 
   dashboardVisible = false;
@@ -54,6 +55,7 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.teste();
     this.transactionService.getAccountFunds();
     this.getUserAccountInfo();
     this.checkTotalAmmount();
@@ -70,6 +72,7 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
       this.totalAmmount = value
     });
   }
+  
   getUserAccountInfo() {
     if (this.userData) {
       this.userAccountService.getUserAccountInfo(this.userData?.accountId)
@@ -115,6 +118,21 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
           item.categoria.reduce((sum: number, cat: { amount: number }) => sum + cat.amount, 0)
         );
 
+        const tipoTotaisMap = new Map<string, number>();
+
+        data.forEach(item => {
+          item.categoria.forEach((cat: { description: string; amount: number; }) => {
+            const tipo = cat.description;
+            const valor = cat.amount;
+            tipoTotaisMap.set(tipo, (tipoTotaisMap.get(tipo) || 0) + valor);
+          });
+        });
+
+        const tipoLabels = Array.from(tipoTotaisMap.keys());
+        const tipoValores = Array.from(tipoTotaisMap.values());
+        const valoresAbsolutos = tipoValores.map(v => Math.abs(v));
+        const total = valoresAbsolutos.reduce((sum, val) => sum + val, 0);
+
 
         const ctx1 = document.getElementById('chartDesempenho') as HTMLCanvasElement;
         new Chart(ctx1, {
@@ -134,20 +152,6 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
             responsive: true
           }
         });
-
-        const tipoTotaisMap = new Map<string, number>();
-
-        data.forEach(item => {
-          item.categoria.forEach((cat: { description: string; amount: number; }) => {
-            const tipo = cat.description;
-            const valor = cat.amount;
-            tipoTotaisMap.set(tipo, (tipoTotaisMap.get(tipo) || 0) + valor);
-          });
-        });
-
-        const tipoLabels = Array.from(tipoTotaisMap.keys());
-        const tipoValores = Array.from(tipoTotaisMap.values());
-
         const ctx2 = document.getElementById('chartGastos') as HTMLCanvasElement;
         new Chart(ctx2, {
           type: 'doughnut',
@@ -167,7 +171,20 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
         });
       });
   }
-  calcularAlerta$(saldoMensal: number, metaEconomia: number): Observable<string> {
+ teste() {
+   this.transactionService.getTransactions()
+      .pipe(take(1))
+      .subscribe(data => {
+        const labels = data.map(item => item.month);
+        const valores = data.map(item =>
+          item.categoria.reduce((sum: number, cat: { amount: number }) => sum + cat.amount, 0)
+        );
+        this.saldoMensal = valores.reduce((acc, val) => acc + val, 0);
+      });
+    
+ }
+
+  calcularAlerta$(saldoMensal: number, metaEconomia: number) {
     
     return this.transactionService.getTransactions().pipe(
       take(1),
@@ -177,8 +194,9 @@ export class WelcomeCardComponent implements OnInit, OnDestroy {
           .filter(c => c.amount < 0)
           .reduce((sum, c) => sum + Math.abs(c.amount), 0);
 
-        const limite = saldoMensal - metaEconomia;
-        const percentual = limite > 0 ? (totalGastos / limite) * 100 : 0;
+        // const limite = this.saldoMensal - metaEconomia;
+        // const percentual = limite > 0 ? (3000 / 1000) * 100 : 0;
+        const percentual = true  ? (3000 / 1000) * 100 : 0;
 
         if (percentual >= 100) {
           return `🚨 Você excedeu seu limite de gastos! (${percentual.toFixed(0)}%)`;
