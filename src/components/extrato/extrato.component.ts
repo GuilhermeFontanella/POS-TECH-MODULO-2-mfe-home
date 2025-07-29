@@ -1,9 +1,10 @@
 import { CommonModule, CurrencyPipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 import { TransactionService } from 'src/services/transactionService.service';
 import { Categoria, Transaction } from 'src/utils/model/extrato-transaction';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 
 @Component({
@@ -17,17 +18,30 @@ import { Categoria, Transaction } from 'src/utils/model/extrato-transaction';
     ReactiveFormsModule,
     DatePipe,
     CurrencyPipe,
-    TitleCasePipe
+    TitleCasePipe,
+    InfiniteScrollModule
   ]
 })
 export class ExtratoComponent implements OnInit, OnDestroy {
   transactions: Transaction[] = [];
+  filteredTransactions: any[] = [];
+  allItems: any[] = [];
+  pagedItems: any[] = [];
+  items: string[] = [];
   showModal = false;
   showEditModal = false;
   disabled = true;
-  editForm: FormGroup;
-  private transactionsSubscription!: Subscription;
+  mensagemErro = '';
+  editForm!: FormGroup;
   editingTransaction: { transactionId: number, categoriaId: number } | null = null;
+
+  private transactionsSubscription!: Subscription;
+  private searchSubject = new Subject<string>();
+
+  filters = {
+    date: '',
+    type: ''
+  };
 
   constructor(
     private transactionService: TransactionService,
@@ -45,6 +59,18 @@ export class ExtratoComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadTransactions();
     this.editDescription();
+    this.items = Array.from({ length: 50 }, (_, i) => `Item ${i + 1}`);
+    this.filteredTransactions = [...this.transactions];
+
+    this.transactionService.getTransactions().subscribe({
+    next: (data) => {
+      this.transactions = data;
+      this.filteredTransactions = [...this.transactions]; 
+    },
+    error: () => {
+      this.mensagemErro = 'Erro ao carregar transações.';
+    }
+  });
   }
 
   ngOnDestroy(): void {
@@ -53,16 +79,65 @@ export class ExtratoComponent implements OnInit, OnDestroy {
     }
   }
 
+  onSearch(value: string) {
+    this.searchSubject.next(value);
+  }
+
+  trackByCategoriaId(index: number, item: Categoria) {
+    return item.id;
+  }
+
+  applyFilters(event?: Event) {
+    if (event) {
+    event.preventDefault();
+  }
+  const { date, type} = this.filters;
+  const filterDate = date ? new Date(date).toISOString().slice(0, 10) : null;
+
+  this.filteredTransactions = this.transactions
+    .map(t => {
+      const filteredCategoria = t.categoria.filter((item: any) => {
+        const itemDateStr = item.date ? new Date(item.date).toISOString().slice(0, 10) : '';
+
+        const matchesDate = filterDate ? itemDateStr === filterDate : true;
+        const matchesType = type ? item.type === type : true;
+
+        return matchesDate && matchesType;
+      });
+
+      return { ...t, categoria: filteredCategoria };
+    })
+    .filter(t => t.categoria.length > 0);
+}
+
+
+
+
+  clearFilters() {
+    this.filters = {
+      date: '',
+      type: ''
+    };
+    this.filteredTransactions = [...this.transactions];
+  }
+
+
   loadTransactions(): void {
-    this.transactionsSubscription = this.transactionService.transactions$.subscribe(
-      data => {
+    this.transactionsSubscription = this.transactionService.transactions$.subscribe({
+      next: (data) => {
         this.transactions = data;
+        this.filteredTransactions = [...data];
+        this.mensagemErro = '';
         console.log('ExtratoComponent initialized', this.transactions);
       },
-      error => {
+      error: (error) => {
         console.error('Erro ao carregar transações:', error);
+        this.mensagemErro = 'Erro ao carregar as transações. Tente novamente mais tarde.';
+      },
+      complete: () => {
+        console.log('Requisição de transações finalizada.');
       }
-    );
+    });
   }
   openEditModal(transactionId: number, categoria: Categoria, month: string): void {
     this.editForm.get('description')?.disable();
@@ -91,6 +166,8 @@ export class ExtratoComponent implements OnInit, OnDestroy {
   }
 
   closeEditModal(): void {
+    this.editForm.reset();
+    this.editForm.get('description')?.enable();
     this.showEditModal = false;
     this.editingTransaction = null;
   }
@@ -113,7 +190,7 @@ export class ExtratoComponent implements OnInit, OnDestroy {
   }
 
   public formatCurrencyBRL(value: number): string {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   }
 
   public formatDateBR(dateInput: string | number): string {
@@ -149,7 +226,11 @@ export class ExtratoComponent implements OnInit, OnDestroy {
         this.loadTransactions();
         this.transactionService.getAccountFunds();
       },
-      error: (err) => console.error('Erro ao atualizar:', err)
+      error: (err) => {
+        this.mensagemErro = 'Erro ao salvar alterações.';
+        console.error('Erro ao atualizar:', err)
+      }
+
     });
   }
   deleteCategoria(transactionId: number, categoriaId: number): void {

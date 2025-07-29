@@ -3,9 +3,6 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { TransactionService } from 'src/services/transactionService.service';
-import { UserAccountService } from 'src/services/user-account.service';
-import { IUser } from 'src/utils/model/user-interface';
-import { UserDataHandler } from 'src/utils/store-user-data';
 
 interface Transaction {
   id?: number;
@@ -40,7 +37,16 @@ export class NewTransactionCardComponent {
   formattedValue: string = '';
   isFocused: boolean = false;
 
-  constructor(private transactionService: TransactionService, private fb: FormBuilder) {}
+
+
+  receiptFile: File | null = null;
+  receiptPreviewUrl: string | null = null;
+  receiptName: string = '';
+  isImage: boolean = false;
+  isPDF: boolean = false;
+  receiptBlobUrl: string | null = null;
+
+  constructor(private transactionService: TransactionService, private fb: FormBuilder) { }
 
   onValueChange(event: any) {
     let value = event.target.value;
@@ -72,7 +78,7 @@ export class NewTransactionCardComponent {
     });
   }
 
-  addTransaction() {
+  addTransaction(): void {
     if (!this.isTransactionValid()) return;
 
     const now = new Date();
@@ -90,6 +96,33 @@ export class NewTransactionCardComponent {
     });
   }
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.receiptFile = file;
+      this.receiptName = file.name;
+      const fileType = file.type;
+      const blobUrl = URL.createObjectURL(file);
+      this.receiptBlobUrl = blobUrl;
+      this.isImage = fileType.startsWith('image/');
+      this.isPDF = fileType === 'application/pdf';
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        this.receiptPreviewUrl = reader.result as string;
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+  abrirRecibo(): void {
+    if (this.receiptBlobUrl) {
+      window.open(this.receiptBlobUrl, '_blank');
+    }
+  }
 
   private isTransactionValid(): boolean {
     return !!this.selectedType && !!this.selectedOption && this.value > 0;
@@ -98,6 +131,7 @@ export class NewTransactionCardComponent {
   private getCurrentMonth(date: Date): string {
     return new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(date);
   }
+
 
   private createCategoria(date: Date) {
     return {
