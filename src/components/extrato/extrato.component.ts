@@ -5,7 +5,11 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
 import { TransactionService } from 'src/services/transactionService.service';
 import { Categoria, Transaction } from 'src/utils/model/extrato-transaction';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
   selector: 'app-extrato',
@@ -19,7 +23,12 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     DatePipe,
     CurrencyPipe,
     TitleCasePipe,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    NzSelectModule,
+    NzDatePickerModule,
+    OverlayModule,
+    NzIconModule,
+    NzButtonModule
   ]
 })
 export class ExtratoComponent implements OnInit, OnDestroy {

@@ -3,11 +3,17 @@
     <label class="label-field">Recibo (opcional)</label>
     <input type="file" class="input-file" accept=".jpg,.jpeg,.png,.pdf" (change)="onFileSelected($event)" />
     <div *ngIf="receiptName" class="file-info">
-      📎 {{ receiptName }}
-      <button type="button" (click)="abrirRecibo()">🔍 Ver Recibo</button>
+      <span style="margin-right: 16px;">
+        <span nz-icon nzType="file" nzTheme="outline"></span>
+        {{ receiptName }}
+      </span>
+      <button nz-button type="submit" nzType="primary" nzShape="round" (click)="abrirRecibo()">
+        <span nz-icon nzType="search"></span>
+        Ver recibo
+      </button>
     </div>
     <img *ngIf="isImage && receiptPreviewUrl" [src]="receiptPreviewUrl" alt="Preview do Recibo" class="preview-img" />
-    <div *ngIf="isPDF && receiptPreviewUrl" class="file-preview">
+    <div  *ngIf="isPDF && receiptPreviewUrl" class="file-preview">
       <a [href]="receiptPreviewUrl" target="_blank">📄 Visualizar Recibo PDF</a>
     </div>
   </div>

@@ -1,0 +1,69 @@
+# Docker
+# Build and Push Docker image to Azure Container Registry
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: Default
+  demands:
+    - agent.name -equals DESKTOP-BO76RF1
+
+variables:
+  tag: '$(Build.BuildId)'
+  imageName: 'mfe-home'
+
+stages:
+  - stage: BuildHostApp
+    displayName: 'Build Host Application'
+    jobs:
+      - job: Build
+        displayName: 'Build Host Application'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm install
+              npm run build
+            displayName: 'Run build commands'
+
+  - stage: BuildAndPushDockerImage
+    displayName: 'Build and Push Docker Image'
+    jobs:
+      - job: Docker
+        displayName: 'Build and Push Docker Image'
+        steps:
+          - task: Docker@2
+            displayName: 'Build Docker image'
+            inputs:
+              command: build
+              repository: $(imageName)
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              containerRegistry: 'mfeHome'
+              tags: |
+                $(tag)
+                latest
+
+          - task: Docker@2
+            displayName: 'Push Docker image'
+            inputs:
+              command: push
+              repository: $(imageName)
+              containerRegistry: 'mfeHome'
+              tags: |
+                $(tag)
+                latest
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'service-pos-tech'
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az webapp restart --name mfe-home --resource-group fiap-pos-tech
+            displayName: 'Restart App Service'
+

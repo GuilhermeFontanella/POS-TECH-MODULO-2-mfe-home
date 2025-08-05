@@ -88,7 +88,7 @@
 
  .line {
    border-bottom-style: solid;
-   width: 185px;
+
    color: #47A138;
    border-width: 1px;
    margin-bottom: 15px;
@@ -151,6 +151,7 @@
   padding: 0.3rem;
   border-radius: 8px;
   margin-bottom: 1rem;
+  width: 100%;
 }
 
 .filters-row {
@@ -160,12 +161,23 @@
   gap: 0.6rem;
   align-items: flex-end;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   min-width: 120px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.filter-group-button {
+  display: flex;
+  flex-direction: row;
+  min-width: 120px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .button-row {
@@ -180,6 +192,17 @@
   margin-bottom: 15px;
 }
 
+#filterDate {
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  transition: all .3s cubic-bezier(.645,.045,.355,1);
+  height: 32px;
+  padding: 0 11px;
+}
+
+.btn-section {
+  display: flex;
+}
 
 
 

@@ -1,67 +1,27 @@
-# mfe-home
+# MfeRemote
 
-[![Angular](https://img.shields.io/badge/Angular-16+-dd0031?logo=angular)](https://angular.io/)
-[![Micro Frontend](https://img.shields.io/badge/Micro--Frontend-Architecture-blue)]()
-[![Azure](https://img.shields.io/badge/Hosted%20on-Azure-blue?logo=microsoft-azure)]()
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.16.
 
-`mfe-home` is a remote micro frontend built with Angular and integrated into a modular micro-frontend architecture using **Module Federation**.
+## Development server
 
-It is deployed on **Azure** and serves as the **navigation bar** for the host application.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4202/`. The application will automatically reload if you change any of the source files.
 
----
+## Code scaffolding
 
-## 🌐 Live Application
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Access the live version via:
-### host-app:
-🔗 [https://mfe-host-b2cccjaqedbmb6c8.canadacentral-01.azurewebsites.net](https://mfe-host-b2cccjaqedbmb6c8.canadacentral-01.azurewebsites.net)
+## Build
 
-### mfe-home:
-🔗 [https://mfe-home-hwcqe3hgg4avhbbe.canadacentral-01.azurewebsites.net](https://mfe-home-hwcqe3hgg4avhbbe.canadacentral-01.azurewebsites.net)
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
----
+## Running unit tests
 
-## 🧩 Architecture Overview
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-The project follows a **micro-frontend architecture**. Each major section of the application is split into an independent micro frontend.
+## Running end-to-end tests
 
-### Structure
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-- Host App (mfe-host)
-  ├─ Navbar App (mfe-navbar)
-  └─ Home App (mfe-home)
+## Further help
 
-### Design Principles
-
-- Domain-driven route ownership
-- Independent deployment pipelines
-- Shared state via state controllers
-- Lazy loading via Module Federation
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js v16+
-- Angular CLI v16+
-- Host app (`mfe-host`) running locally
-
-### Install Dependencies
-
-```bash
-npm install
-````
-
-### Run mfe-navbar
-```bash
-npm start
-````
-
-## This will start the mfe-navbar at:
-➡️ http://localhost:4202
-
-⚠️ You will need the host application (mfe-host) running simultaneously to see the navbar rendered and working within the full app.  
-🔗 [https://github.com/GuilhermeFontanella/POS-TECH-MODULO-2-host-app](https://github.com/GuilhermeFontanella/POS-TECH-MODULO-2-host-app)  
-🔗 [https://github.com/GuilhermeFontanella/POS-TECH-MODULO-2-mfe-navbar](https://github.com/GuilhermeFontanella/POS-TECH-MODULO-2-mfe-navbar)
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.

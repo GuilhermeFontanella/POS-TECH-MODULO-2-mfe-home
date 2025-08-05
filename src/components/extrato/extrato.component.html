@@ -1,24 +1,41 @@
 <section class="container">
   <form class="filters-container" (submit)="applyFilters()">
     <div class="filters-row">
-      <div class="col-sm-12">
+      <div style="width: 100%;">
         <div class="filter-group">
           <label for="filterDate">Data</label>
           <input id="filterDate" type="date" [(ngModel)]="filters.date" name="date" />
         </div>
         <div class="filter-group">
+          
           <label for="filterType">Tipo</label>
-          <select id="filterType" [(ngModel)]="filters.type" name="type">
-            <option value="">Todos</option>
-            <option value="income">Depósito</option>
-            <option value="transfer">Transferência</option>
-          </select>
+            <div class="filter-group-button">
+              <nz-select style="width: 178px;" [(ngModel)]="filters.type" name="type">
+                <nz-option nzValue="" nzLabel="Todos"></nz-option>
+                <nz-option nzValue="income" nzLabel="Depósito"></nz-option>
+                <nz-option nzValue="transfer" nzLabel="Transferência"></nz-option>
+              </nz-select>
+              <div class="btn-section">
+                <button style="margin-right: 4px;" nz-button type="submit" nzType="default" nzShape="circle">
+                  <span nz-icon nzType="search"></span>
+                </button>
+                <button (click)="clearFilters()" nz-button type="submit" nzType="default" nzShape="circle">
+                  <span nz-icon nzType="close" nzTheme="outline"></span>
+                </button>
+              </div>
+            </div>
+          
         </div>
       </div>
-      <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary">🔍</button>
-        <button type="button" class="btn btn-secondary button-row" (click)="clearFilters()">🧹</button>
-      </div>
+      <!-- <div class="d-flex gap-2">
+        
+        <button nz-button type="submit" nzType="default" nzShape="circle">
+          <span nz-icon nzType="search"></span>
+        </button>
+        <button (click)="clearFilters()" nz-button type="submit" nzType="default" nzShape="circle">
+          <span nz-icon nzType="close" nzTheme="outline"></span>
+        </button>
+      </div> -->
     </div>
   </form>
 
@@ -52,12 +69,12 @@
                 <div>
                   <button class="btn btn-outline-warning btn-sm me-1 button"
                     (click)="openEditModal(transaction.id, item, transaction.month)">
-                    <img src="http://localhost:4202/assets/pencil.svg" alt="pencil" class="img-white" /></button>
+                    <span nz-icon nzType="edit" nzTheme="outline"></span></button>
                 </div>
                 <div>
                   <button class="btn btn-outline-danger btn-sm button margem"
                     (click)="deleteCategoria(transaction.id, item.id)">
-                    <img src="http://localhost:4202/assets/trash.svg" alt="trash" class="img-white" /></button>
+                    <span nz-icon nzType="delete" nzTheme="outline"></span></button>
                 </div>
               </div>
               <p class="date">{{ formatDateBR(item.date) }}</p>

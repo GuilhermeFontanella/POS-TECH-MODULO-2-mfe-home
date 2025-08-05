@@ -10,6 +10,7 @@ import { UserAccountService } from 'src/services/user-account.service';
 import { IUser } from 'src/utils/model/user-interface';
 import { UserDataHandler } from 'src/utils/store-user-data';
 import { Chart, registerables } from 'chart.js';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 Chart.register(...registerables);
 
@@ -26,7 +27,8 @@ Chart.register(...registerables);
     NzDividerModule,
     NzIconModule,
     NzCardModule,
-    NzButtonModule
+    NzButtonModule,
+    OverlayModule
   ]
 })
 export class WelcomeCardComponent implements OnInit, OnDestroy {

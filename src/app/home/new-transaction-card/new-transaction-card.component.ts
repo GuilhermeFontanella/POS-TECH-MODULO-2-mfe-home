@@ -3,6 +3,9 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { TransactionService } from 'src/services/transactionService.service';
+import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 interface Transaction {
   id?: number;
@@ -26,7 +29,10 @@ interface Transaction {
   imports: [
     CommonModule,
     FormsModule,
-    NzCardModule
+    NzCardModule,
+    NzUploadModule,
+    NzButtonModule,
+    NzIconModule
   ]
 })
 export class NewTransactionCardComponent {
@@ -36,6 +42,7 @@ export class NewTransactionCardComponent {
   value: number = 0;
   formattedValue: string = '';
   isFocused: boolean = false;
+  fileList!: NzUploadFile[];
 
 
 
@@ -96,7 +103,7 @@ export class NewTransactionCardComponent {
     });
   }
 
-  onFileSelected(event: Event): void {
+  onFileSelected(event: any): void {
     const input = event.target as HTMLInputElement;
 
     if (input.files && input.files[0]) {
