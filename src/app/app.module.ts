@@ -1,10 +1,8 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-
 
 @NgModule({
   declarations: [
@@ -13,9 +11,11 @@ import { HomeComponent } from './home/home.component';
   imports: [
     BrowserModule,
     RouterModule,
-    HomeComponent
+    HomeComponent,
   ],
-  providers: [],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

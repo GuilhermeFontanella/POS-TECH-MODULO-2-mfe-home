@@ -1,54 +1,37 @@
 <nz-card class="welcomeCard">
   <div>
-    <div>
-      <h2 nz-typography>Olá, Manoel! :)</h2>
-    </div>
-    <div>
-      <span nz-typography>{{todayDate | date:'EEEE, dd/MM/yyyy':'':'pt-BR'}}</span>
-    </div>
+      <h2 nz-typography>Olá, {{(vm.userData$ | async)?.name || 'Usuário' }}! :)</h2>
+      <span nz-typography>{{vm.todayDate | date:'EEEE, dd/MM/yyyy':'':'pt-BR'}}</span>
   </div>
   <div class="accountInfo">
     <div>
       <div class="showAmmountButton">
         <h3 nz-typography>Saldo</h3>
-        <button class="btn" nz-button nzType="primary" nzSize="large" nzShape="circle" (click)="hideAmmount()">
+        <button class="btn" nz-button nzType="primary" nzSize="large" nzShape="circle" (click)="toggleAmmount()">
           <span nz-icon nzTheme="fill" [nzType]="!showAmmount ? 'eye-invisible' : 'eye'"></span>
         </button>
       </div>
       <nz-divider class="divider"></nz-divider>
       <div class="ammountInfo">
         <span nz-typography>Conta Corrente</span>
-        <span nz-typography style="font-size: 31px;">{{ showAmmount ? formatCurrencyBRL(totalAmmount) : 'R$
-          *******'}}</span>
+        <span nz-typography style="font-size: 31px;">{{ showAmmount ? formatCurrencyBRL((vm.totalAmmount$)) : 'R$*******'}}</span>
       </div>
     </div>
   </div>
   <div style="margin-top: 20px; ">
-    <button nz-button nzType="default" (click)="openDashboard()" style="color: #FFF;">📊 Visualizar Dashboard</button>
+    <button nz-button nzType="default" (click)="openDashboard()" style="color: #FFF;">
+      <span nz-icon nzType="bar-chart" nzTheme="outline" style="font-size: 20px;"></span>
+      Visualizar Dashboard
+    </button>
   </div>
 </nz-card>
 
 <div class="dashboard-overlay" *ngIf="dashboardVisible">
   <div class="dashboard-modal">
-    <button nz-button nzType="default" nzDanger (click)="closeDashboard()" class="close-btn">✖ Fechar</button>
+    <button nz-button nzType="default" nzDanger (click)="cloaseDashboard()" class="close-btn">
+      <span nz-icon nzType="close" nzTheme="outline"></span>
+    </button>
     <h2>Dashboard Financeiro</h2>
-
-    <div class="charts">
-      <canvas id="chartDesempenho"></canvas>
-      <canvas id="chartGastos"></canvas>
-    </div>
-
-    <!-- <div class="widgets">
-      <div class="widget">
-        <h3>Meta de Economia</h3>
-        <p>R$ {{ metaEconomia }}</p>
-        <input type="range" min="1000" max="20000" step="500" [value]="metaEconomia"
-          (input)="metaEconomia = $any($event.target).valueAsNumber" />
-      </div>
-      <div class="widget alerta">
-        <h3>Alerta de Gastos</h3>
-          <p>{{ alertaMensagem$ | async }}</p>
-      </div>
-    </div> -->
+    <app-dashboard-chart [chartData]="vm.chartData$ | async "></app-dashboard-chart>
   </div>
 </div>

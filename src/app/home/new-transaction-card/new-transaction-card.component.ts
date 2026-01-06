@@ -6,6 +6,9 @@ import { TransactionService } from 'src/services/transactionService.service';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { UploadComponent } from './components/upload/upload.component';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 interface Transaction {
   id?: number;
@@ -32,7 +35,10 @@ interface Transaction {
     NzCardModule,
     NzUploadModule,
     NzButtonModule,
-    NzIconModule
+    NzIconModule,
+    UploadComponent,
+    NzSelectModule,
+    NzInputModule,
   ]
 })
 export class NewTransactionCardComponent {
@@ -44,7 +50,13 @@ export class NewTransactionCardComponent {
   isFocused: boolean = false;
   fileList!: NzUploadFile[];
 
-
+  selectedValue = { label: 'Câmbio de Moeda', value: 1 };
+  optionList = [
+    { label: 'Câmbio de Moeda', value: 1 },
+    { label: 'DOC/TED', value: 2 },
+    { label: 'Empréstimo e Financiamento', value: 3 }
+  ];
+  compareFn = (o1: any, o2: any): boolean => (o1 && o2 ? o1.value === o2.value : o1 === o2);
 
   receiptFile: File | null = null;
   receiptPreviewUrl: string | null = null;
@@ -56,24 +68,15 @@ export class NewTransactionCardComponent {
   constructor(private transactionService: TransactionService, private fb: FormBuilder) { }
 
   onValueChange(event: any) {
+    if (!event || !event.target) return;
     let value = event.target.value;
     value = value.replace(/\D/g, '');
     const numericValue = parseInt(value) || 0;
     this.value = numericValue / 100;
     this.formattedValue = this.formatCurrency(numericValue);
-  }
-
-  onFocus() {
-    this.isFocused = true;
-    if (this.formattedValue === '' || this.formattedValue === '0,00') {
+    
+    if (this.formattedValue === '' || this.formattedValue === '0,00' || this.formattedValue === '0') {
       this.formattedValue = '';
-    }
-  }
-
-  onBlur() {
-    this.isFocused = false;
-    if (this.formattedValue === '') {
-      this.formattedValue = '0,00';
     }
   }
 
@@ -176,26 +179,5 @@ export class NewTransactionCardComponent {
     this.selectedOption = "";
     this.value = 0;
     this.formattedValue = '';
-  }
-
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  selectOption(value: string, text: string, event: Event) {
-    event.stopPropagation();
-    this.selectedType = value;
-    this.selectedOption = text;
-    this.isDropdownOpen = false;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    const target = event.target as HTMLElement;
-    const selectWrapper = target.closest('.custom-select-wrapper');
-
-    if (!selectWrapper && this.isDropdownOpen) {
-      this.isDropdownOpen = false;
-    }
   }
 }

@@ -1,7 +1,7 @@
 <nz-card class="newTransactionCard">
   <div class="input-container push-right">
     <label class="label-field">Recibo (opcional)</label>
-    <input type="file" class="input-file" accept=".jpg,.jpeg,.png,.pdf" (change)="onFileSelected($event)" />
+    <app-upload></app-upload>
     <div *ngIf="receiptName" class="file-info">
       <span style="margin-right: 16px;">
         <span nz-icon nzType="file" nzTheme="outline"></span>
@@ -26,44 +26,23 @@
   </div>
   <div class="newTransForm">
     <div class="formContent">
-      <div class="custom-select-wrapper" (click)="toggleDropdown()">
-        <div class="custom-select" [class.open]="isDropdownOpen">
-          <span class="selected-text">{{selectedOption || 'Selecione o tipo de transação'}}</span>
-          <div class="select-arrow" [class.rotated]="isDropdownOpen">
-            <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
-              <path d="M1 1L5 5L9 1" fill="#004D61" />
-            </svg>
-          </div>
-        </div>
+      <nz-select
+      class="custom-select"
+        [(ngModel)]="selectedValue"
 
-        <div class="dropdown-options" [class.show]="isDropdownOpen">
-          <div class="option" [class.selected]="selectedType === 'cambio'"
-            (click)="selectOption('cambio', 'Transferência', $event)">
-            Câmbio de Moeda
-          </div>
-          <div class="option" [class.selected]="selectedType === 'docted'"
-            (click)="selectOption('docted', 'Transferência', $event)">
-            DOC/TED
-          </div>
-          <div class="option" [class.selected]="selectedType === 'emprestimo'"
-            (click)="selectOption('emprestimo', 'Deposito', $event)">
-            Empréstimo e Financiamento
-          </div>
-        </div>
-      </div>
-
-      <select style="display: none;" [(ngModel)]="selectedType" name="tipoTransacao">
-        <option value="cambio">Câmbio de Moeda</option>
-        <option value="docted">DOC/TED</option>
-        <option value="emprestimo">Empréstimo e Financiamento</option>
-      </select>
+        nzAllowClear
+        nzPlaceHolder="Selecione o tipo de transação"
+      >
+        <nz-option *ngFor="let option of optionList" [nzValue]="option" [nzLabel]="option.label"></nz-option>
+      </nz-select>
       <div class="input-container">
         <Label class="label-field" nz-typography>Valor</Label>
-        <input class="input-field__number" [(ngModel)]="formattedValue" (input)="onValueChange($event)"
-          (focus)="onFocus()" (blur)="onBlur()" type="text" placeholder="00,00" name="valor" />
+        <nz-input-group nzPrefix="R$">
+          <input type="text" class="input-field__number" nz-input (input)="onValueChange($event)" [(ngModel)]="formattedValue" placeholder="input with clear icon" placeholder="00,00" name="valor" />
+        </nz-input-group>
       </div>
 
-      <button class="btn-primary" (click)="addTransaction()">
+      <button [disabled]="formattedValue.length === 0" nz-button class="btn-primary" (click)="addTransaction()">
         Concluir transação
       </button>
     </div>

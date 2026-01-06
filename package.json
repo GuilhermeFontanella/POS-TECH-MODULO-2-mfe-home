@@ -19,16 +19,17 @@
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
+    "@ant-design/icons-angular": "^16.0.0",
     "@ctrl/tinycolor": "^4.1.0",
     "@ng-bootstrap/ng-bootstrap": "^15.1.2",
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
+    "chart.js": "^4.5.0",
     "ng-zorro-antd": "^16.2.2",
+    "ngx-infinite-scroll": "^16.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.13.0",
-    "ngx-infinite-scroll": "^16.0.0",
-    "chart.js": "^4.5.0"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-architects/module-federation": "^16.0.0",
