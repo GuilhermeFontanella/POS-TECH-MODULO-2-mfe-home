@@ -5,20 +5,18 @@ import { By } from '@angular/platform-browser';
 import { HomeComponent } from './home.component';
 import { HomeViewModel } from './home.viewmodel';
 import { ScreenType } from 'src/utils/check-screen-size';
-import { NZ_I18N, pt_BR } from 'ng-zorro-antd/i18n';
 import { LOCALE_ID } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NZ_ICONS, NzIconModule } from 'ng-zorro-antd/icon';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { ExtratoComponent } from 'src/app/home/extrato/extrato.component';
 import { NewTransactionCardComponent } from './new-transaction-card/new-transaction-card.component';
 import { WelcomeCardComponent } from './welcome-card/welcome-card.component';
-import { CurrencyPipe, DatePipe, registerLocaleData } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { fakeAsync, tick } from '@angular/core/testing';
@@ -59,7 +57,6 @@ describe('HomeComponent', () => {
         NzDividerModule,
         ReactiveFormsModule,
         FormsModule,
-        HttpClientModule,
         ExtratoComponent,
         WelcomeCardComponent,
         NewTransactionCardComponent,
