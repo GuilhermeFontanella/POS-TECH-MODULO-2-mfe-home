@@ -24,7 +24,6 @@
                 </button>
               </div>
             </div>
-          
         </div>
       </div>
     </div>
@@ -83,25 +82,33 @@
     <p>Nenhuma transação encontrada com os filtros aplicados.</p>
   </div>
 </ng-template>
-<div class="modal fade show d-block custom-modal-bg" tabindex="-1" role="dialog" *ngIf="showModal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="modal-content">
-        <h2>Editar Transação</h2>
-        <input formControlName="description" type="text" placeholder="Descrição" placeholder=description />
-        <select formControlName="type">
-          <option value="income">Depósito</option>
-          <option value="expense">Despesa</option>
-          <option value="transfer">Transferência</option>
-        </select>
-        <input formControlName="amount" type="number" placeholder="Valor" />
-        <input formControlName="date" type="date" />
-        <input formControlName="month" placeholder="Mês (ex: Maio)" />
-        <div class="modal-actions">
-          <button type="submit" [disabled]="editForm.invalid">Salvar</button>
-          <button type="button" (click)="closeEditModal()">Cancelar</button>
+<nz-modal [(nzVisible)]="showModal" nzTitle="Editar Transação" [nzContent]="modalContent" [nzFooter]="modalFooter">
+  <ng-template #modalContent>
+    <div tabindex="-1" role="dialog" *ngIf="showModal">
+      <div role="document">
+        <div class="modal-content">
+          <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="modal-content">
+            <input nz-input formControlName="description" type="text" placeholder="Descrição" />
+            <nz-select
+            class="custom-select"
+            
+            nzAllowClear
+            nzPlaceHolder="Selecione o tipo de transação"
+            >
+              <nz-option *ngFor="let option of optionList" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+            </nz-select>
+            <input nz-input formControlName="amount" type="number" placeholder="Valor" />
+            <input nz-input formControlName="date" type="date" />
+            <input nz-input formControlName="month" placeholder="Mês (ex: Maio)" />
+          </form>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
+  </ng-template>
+  <ng-template #modalFooter>
+    <div class="modal-actions">
+      <button nz-button type="submit" [disabled]="editForm.invalid">Salvar</button>
+      <button nz-button nzType="default" type="button" (click)="closeEditModal()">Cancelar</button>
+    </div>
+  </ng-template>
+</nz-modal>

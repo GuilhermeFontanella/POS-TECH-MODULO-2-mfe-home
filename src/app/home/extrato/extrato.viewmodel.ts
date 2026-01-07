@@ -12,7 +12,7 @@ export class ExtratoViewModel {
     editForm!: FormGroup;
     filters = {
         date: '',
-        type: '',
+        type: { label: 'Depósito', value: 'income' },
         amount: '',
         month: '',
         description: ''
@@ -28,11 +28,11 @@ export class ExtratoViewModel {
         private fb: FormBuilder
     ) {
         this.editForm = this.fb.group({
-            description: ['', Validators.required],
-            type: ['', Validators.required],
+            description: [null, Validators.required],
+            type: [null, Validators.required],
             amount: [null, Validators.required],
-            date: ['', Validators.required],
-            month: ['', Validators.required]
+            date: [null, Validators.required],
+            month: [null, Validators.required]
         });
 
         this.editForm.get('type')?.valueChanges.subscribe(value => {

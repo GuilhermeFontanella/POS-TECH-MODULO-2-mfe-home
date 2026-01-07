@@ -1,9 +1,6 @@
 import { CommonModule, CurrencyPipe, DatePipe, TitleCasePipe } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, Subject, Subscription } from 'rxjs';
-import { TransactionService } from 'src/services/transactionService.service';
-import { Categoria, Transaction } from 'src/utils/model/extrato-transaction';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -13,7 +10,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { ExtratoViewModel } from './extrato.viewmodel';
 import { TRANSACTION } from '../port/transaction.token';
 import { TransactionsFirebaseService } from 'src/app/infra/firebase/transactions-firebase.service';
-import { PortalModule } from '@angular/cdk/portal';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 
 @Component({
@@ -34,7 +32,8 @@ import { PortalModule } from '@angular/cdk/portal';
     OverlayModule,
     NzIconModule,
     NzButtonModule,
-    PortalModule,
+    NzInputModule,
+    NzModalModule
   ],
   providers: [
     ExtratoViewModel,
@@ -44,7 +43,11 @@ import { PortalModule } from '@angular/cdk/portal';
 export class ExtratoComponent implements OnInit {
   vm = inject(ExtratoViewModel);
   showModal: boolean = false;
-
+  optionList = [
+    { label: 'Depósito', value: 'Depósito' },
+    { label: 'Despesa', value: 'Despesas' },
+    { label: 'Transferência', value: 'Transferência' }
+  ];
   editForm = this.vm.editForm;
 
   ngOnInit(): void {
