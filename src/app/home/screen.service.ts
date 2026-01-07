@@ -1,7 +1,8 @@
 import { checkScreenSize } from 'src/utils/check-screen-size';
 import { Injectable } from "@angular/core";
-import { ScreenPort } from "./screen.port";
+
 import { fromEvent, map, startWith } from "rxjs";
+import { ScreenPort } from './port/screen.port';
 
 @Injectable({providedIn: 'root'})
 export class ScreenService implements ScreenPort {

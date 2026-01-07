@@ -9,7 +9,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NZ_I18N, pt_BR } from 'ng-zorro-antd/i18n';
 import { NZ_ICONS, NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { ExtratoComponent } from 'src/components/extrato/extrato.component';
+import { ExtratoComponent } from 'src/app/home/extrato/extrato.component';
 import { checkScreenSize, ScreenType } from 'src/utils/check-screen-size';
 import { WelcomeCardComponent } from './welcome-card/welcome-card.component';
 import { NewTransactionCardComponent } from './new-transaction-card/new-transaction-card.component';

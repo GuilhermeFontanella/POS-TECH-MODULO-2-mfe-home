@@ -10,6 +10,8 @@ import { WelcomeCardViewModel } from './welcome-card.viewmodel';
 import { ChartService } from '../chart/chart.service';
 import { ChartComponent } from '../chart/chart.component';
 import { BehaviorSubject } from 'rxjs';
+import { TRANSACTION } from '../port/transaction.token';
+import { TransactionsFirebaseService } from 'src/app/infra/firebase/transactions-firebase.service';
 
 Chart.register(...registerables);
 @Component({
@@ -28,7 +30,10 @@ Chart.register(...registerables);
     OverlayModule,
     ChartComponent
   ],
-  providers: [WelcomeCardViewModel]
+  providers: [
+    WelcomeCardViewModel,
+    { provide: TRANSACTION, useClass: TransactionsFirebaseService }
+  ]
 })
 export class WelcomeCardComponent {
   @ViewChild('chartDesempenho', { static: false }) desempenhoEl!: ElementRef<HTMLCanvasElement>;

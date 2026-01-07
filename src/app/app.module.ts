@@ -8,11 +8,7 @@ import { HomeComponent } from './home/home.component';
   declarations: [
     AppComponent,
   ],
-  imports: [
-    BrowserModule,
-    RouterModule,
-    HomeComponent,
-  ],
+  imports: [BrowserModule],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' }
   ],
