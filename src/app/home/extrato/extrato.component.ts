@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DatePipe, TitleCasePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { TransactionService } from 'src/services/transactionService.service';
@@ -10,6 +10,11 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { ExtratoViewModel } from './extrato.viewmodel';
+import { TRANSACTION } from '../port/transaction.token';
+import { TransactionsFirebaseService } from 'src/app/infra/firebase/transactions-firebase.service';
+import { PortalModule } from '@angular/cdk/portal';
+
 
 @Component({
   selector: 'app-extrato',
@@ -28,229 +33,56 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     NzDatePickerModule,
     OverlayModule,
     NzIconModule,
-    NzButtonModule
+    NzButtonModule,
+    PortalModule,
+  ],
+  providers: [
+    ExtratoViewModel,
+    { provide: TRANSACTION, useClass: TransactionsFirebaseService }
   ]
 })
-export class ExtratoComponent implements OnInit, OnDestroy {
-  transactions: Transaction[] = [];
-  filteredTransactions: any[] = [];
-  allItems: any[] = [];
-  pagedItems: any[] = [];
-  items: string[] = [];
-  showModal = false;
-  showEditModal = false;
-  disabled = true;
-  mensagemErro = '';
-  editForm!: FormGroup;
-  editingTransaction: { transactionId: number, categoriaId: number } | null = null;
+export class ExtratoComponent implements OnInit {
+  vm = inject(ExtratoViewModel);
+  showModal: boolean = false;
 
-  private transactionsSubscription!: Subscription;
-  private searchSubject = new Subject<string>();
-
-  filters = {
-    date: '',
-    type: ''
-  };
-
-  constructor(
-    private transactionService: TransactionService,
-    private fb: FormBuilder) {
-
-    this.editForm = this.fb.group({
-      description: ['', Validators.required],
-      type: ['', Validators.required],
-      amount: [null, Validators.required],
-      date: ['', Validators.required],
-      month: ['', Validators.required]
-    });
-  }
+  editForm = this.vm.editForm;
 
   ngOnInit(): void {
-    this.loadTransactions();
-    this.editDescription();
-    this.items = Array.from({ length: 50 }, (_, i) => `Item ${i + 1}`);
-    this.filteredTransactions = [...this.transactions];
-
-    this.transactionService.getTransactions().subscribe({
-    next: (data) => {
-      this.transactions = data;
-      this.filteredTransactions = [...this.transactions]; 
-    },
-    error: () => {
-      this.mensagemErro = 'Erro ao carregar transações.';
-    }
-  });
-  }
-
-  ngOnDestroy(): void {
-    if (this.transactionsSubscription) {
-      this.transactionsSubscription.unsubscribe();
-    }
-  }
-
-  onSearch(value: string) {
-    this.searchSubject.next(value);
-  }
-
-  trackByCategoriaId(index: number, item: Categoria) {
-    return item.id;
+      this.vm.init();
   }
 
   applyFilters(event?: Event) {
-    if (event) {
-    event.preventDefault();
+    event?.preventDefault();
+    this.vm.applyFilters();
   }
-  const { date, type} = this.filters;
-  const filterDate = date ? new Date(date).toISOString().slice(0, 10) : null;
-
-  this.filteredTransactions = this.transactions
-    .map(t => {
-      const filteredCategoria = t.categoria.filter((item: any) => {
-        const itemDateStr = item.date ? new Date(item.date).toISOString().slice(0, 10) : '';
-
-        const matchesDate = filterDate ? itemDateStr === filterDate : true;
-        const matchesType = type ? item.type === type : true;
-
-        return matchesDate && matchesType;
-      });
-
-      return { ...t, categoria: filteredCategoria };
-    })
-    .filter(t => t.categoria.length > 0);
-}
-
-
-
 
   clearFilters() {
-    this.filters = {
-      date: '',
-      type: ''
-    };
-    this.filteredTransactions = [...this.transactions];
+    this.vm.clearFilters();
   }
 
-
-  loadTransactions(): void {
-    this.transactionsSubscription = this.transactionService.transactions$.subscribe({
-      next: (data) => {
-        this.transactions = data;
-        this.filteredTransactions = [...data];
-        this.mensagemErro = '';
-        console.log('ExtratoComponent initialized', this.transactions);
-      },
-      error: (error) => {
-        console.error('Erro ao carregar transações:', error);
-        this.mensagemErro = 'Erro ao carregar as transações. Tente novamente mais tarde.';
-      },
-      complete: () => {
-        console.log('Requisição de transações finalizada.');
-      }
-    });
-  }
-  openEditModal(transactionId: number, categoria: Categoria, month: string): void {
-    this.editForm.get('description')?.disable();
-    this.editingTransaction = { transactionId, categoriaId: categoria.id };
-    const testes = this.editForm.patchValue({
-      description: categoria.description,
-      type: categoria.type,
-      amount: categoria.amount,
-      date: categoria.date,
-      month: month
-    });
-    this.showEditModal = true;
+  openEditModal(transactionId: number, categoriaId: number) {
+    this.vm.openEditModal(transactionId, categoriaId);
+    this.showModal = true;
   }
 
-  editDescription(): void {
-    this.editForm.get('type')?.valueChanges.subscribe(value => {
-      const descriptionsMap: { [key: string]: string } = {
-        income: 'Depósito',
-        expense: 'Despesa',
-        transfer: 'Transferência'
-      };
-      this.editForm.patchValue({
-        description: descriptionsMap[value] || ''
-      });
-    });
+  closeEditModal() {
+    this.vm.closeEditModal();
+    this.showModal = false;
   }
 
-  closeEditModal(): void {
-    this.editForm.reset();
-    this.editForm.get('description')?.enable();
-    this.showEditModal = false;
-    this.editingTransaction = null;
+  saveEdit() {
+    this.vm.saveEdit();
   }
 
-  saveEdit(): void {
-    this.editForm.get('description')?.enable();
-    if (this.editForm.valid && this.editingTransaction) {
-      const { transactionId, categoriaId } = this.editingTransaction;
-      const transaction = this.getTransactionById(transactionId);
-      if (transaction) {
-        const categoria = this.getCategoriaById(transaction, categoriaId);
-        if (categoria) {
-          this.updateCategoriaFromForm(categoria);
-          this.updateTransactionMonthFromForm(transaction);
-          this.persistTransaction(transactionId, transaction);
-        }
-      }
-      this.closeEditModal();
-    }
+  deleteCategoria(transactionId: number, categoriaId: number) {
+    this.vm.deleteCategoria(transactionId, categoriaId);
   }
 
-  public formatCurrencyBRL(value: number): string {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  formatCurrencyBRL(value: number): string {
+    return this.vm.formatCurrencyBRL(value);
   }
 
-  public formatDateBR(dateInput: string | number): string {
-    const date = new Date(dateInput);
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleDateString('pt-BR');
-  }
-
-  private getTransactionById(transactionId: number): Transaction | undefined {
-    return this.transactions.find(t => t.id === transactionId);
-  }
-
-  private getCategoriaById(transaction: Transaction, categoriaId: number): Categoria | undefined {
-    return transaction.categoria.find(c => c.id === categoriaId);
-  }
-
-  private updateCategoriaFromForm(categoria: Categoria): void {
-    categoria.description = this.editForm.value.description;
-    categoria.type = this.editForm.value.type;
-    categoria.amount = this.editForm.value.type === 'income'
-      ? Math.abs(this.editForm.value.amount)
-      : -Math.abs(this.editForm.value.amount);
-    categoria.date = this.editForm.value.date;
-  }
-
-  private updateTransactionMonthFromForm(transaction: Transaction): void {
-    transaction.month = this.editForm.value.month;
-  }
-
-  private persistTransaction(transactionId: number, transaction: Transaction): void {
-    this.transactionService.updateTransaction(transactionId, transaction).subscribe({
-      next: () => {
-        this.loadTransactions();
-        this.transactionService.getAccountFunds();
-      },
-      error: (err) => {
-        this.mensagemErro = 'Erro ao salvar alterações.';
-        console.error('Erro ao atualizar:', err)
-      }
-
-    });
-  }
-  deleteCategoria(transactionId: number, categoriaId: number): void {
-    const transaction = this.transactions.find(t => t.id === transactionId);
-    if (transaction) {
-      transaction.categoria = transaction.categoria.filter(c => c.id !== categoriaId);
-      this.transactionService.updateTransaction(transactionId, transaction).subscribe(() => {
-        this.transactionService.getAccountFunds();
-        this.loadTransactions();
-        this.transactionService.getAccountFunds();
-      });
-    }
+  formatDateBR(dateInput: string | number): string {
+    return this.vm.formatDateBR(dateInput);
   }
 }

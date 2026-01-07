@@ -4,6 +4,7 @@ export interface Categoria {
   date: string;
   type: 'income' | 'expense' | 'transfer';
   amount: number;
+  month: string;
 }
 
 export interface Transaction {

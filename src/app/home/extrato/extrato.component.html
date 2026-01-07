@@ -4,13 +4,13 @@
       <div style="width: 100%;">
         <div class="filter-group">
           <label for="filterDate">Data</label>
-          <input id="filterDate" type="date" [(ngModel)]="filters.date" name="date" />
+          <input id="filterDate" type="date" [(ngModel)]="vm.filters.date" name="date" />
         </div>
         <div class="filter-group">
           
           <label for="filterType">Tipo</label>
             <div class="filter-group-button">
-              <nz-select style="width: 178px;" [(ngModel)]="filters.type" name="type">
+              <nz-select style="width: 178px;" [(ngModel)]="vm.filters.type" name="type">
                 <nz-option nzValue="" nzLabel="Todos"></nz-option>
                 <nz-option nzValue="income" nzLabel="Depósito"></nz-option>
                 <nz-option nzValue="transfer" nzLabel="Transferência"></nz-option>
@@ -27,15 +27,6 @@
           
         </div>
       </div>
-      <!-- <div class="d-flex gap-2">
-        
-        <button nz-button type="submit" nzType="default" nzShape="circle">
-          <span nz-icon nzType="search"></span>
-        </button>
-        <button (click)="clearFilters()" nz-button type="submit" nzType="default" nzShape="circle">
-          <span nz-icon nzType="close" nzTheme="outline"></span>
-        </button>
-      </div> -->
     </div>
   </form>
 
@@ -44,44 +35,43 @@
       <h2>Extrato</h2>
     </div>
   </div>
-  <div *ngIf="mensagemErro" class="alert alert-danger">
-    {{ mensagemErro }}
-  </div>
 
   <div class="scroll-container">
-    <ng-container *ngIf="filteredTransactions.length > 0; else noResults">
-      <div *ngFor="let transaction of filteredTransactions">
-        <div class="row description">
-          <div class="col-sm-12" *ngIf="transaction.categoria.length > 0">
-            <h3 class="transaction-date">{{ transaction.month | titlecase }} </h3>
-          </div>
-        </div>
-        <div *ngFor="let item of transaction.categoria; trackBy: trackByCategoriaId">
+    <ng-container *ngIf="(vm.filteredTransactions$ | async) as transactions; else noResults">
+      <div *ngIf="transactions.length > 0; else noResults">
+        <div *ngFor="let transaction of transactions">
           <div class="row description">
-            <div class="col-sm-12">
-              <h5 class="transaction-description text">{{ item.description }}</h5>
-              <p class="transaction-amount value">
-                {{ formatCurrencyBRL(item.amount) }}
-              </p>
-            </div>
-            <div class="col-sm-8">
-              <div class="aline-button">
-                <div>
-                  <button class="btn btn-outline-warning btn-sm me-1 button"
-                    (click)="openEditModal(transaction.id, item, transaction.month)">
-                    <span nz-icon nzType="edit" nzTheme="outline"></span></button>
-                </div>
-                <div>
-                  <button class="btn btn-outline-danger btn-sm button margem"
-                    (click)="deleteCategoria(transaction.id, item.id)">
-                    <span nz-icon nzType="delete" nzTheme="outline"></span></button>
-                </div>
-              </div>
-              <p class="date">{{ formatDateBR(item.date) }}</p>
+            <div class="col-sm-12" *ngIf="transaction.categoria.length > 0">
+              <h3 class="transaction-date">{{ transaction.month | titlecase }} </h3>
             </div>
           </div>
-          <div class="col-sm-12">
-            <div class="line"></div>
+          <div *ngFor="let item of transaction.categoria">
+            <div class="row description">
+              <div class="col-sm-12">
+                <h5 class="transaction-description text">{{ item.description }}</h5>
+                <p class="transaction-amount value">
+                  {{ formatCurrencyBRL(item.amount) }}
+                </p>
+              </div>
+              <div class="col-sm-8">
+                <div class="aline-button">
+                  <div>
+                    <button class="btn btn-outline-warning btn-sm me-1 button"
+                      (click)="openEditModal(transaction.id, item.id)">
+                      <span nz-icon nzType="edit" nzTheme="outline"></span></button>
+                  </div>
+                  <div>
+                    <button class="btn btn-outline-danger btn-sm button margem"
+                      (click)="deleteCategoria(transaction.id, item.id)">
+                      <span nz-icon nzType="delete" nzTheme="outline"></span></button>
+                  </div>
+                </div>
+                <p class="date">{{ formatDateBR(item.date) }}</p>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="line"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -93,7 +83,7 @@
     <p>Nenhuma transação encontrada com os filtros aplicados.</p>
   </div>
 </ng-template>
-<div class="modal fade show d-block custom-modal-bg" tabindex="-1" role="dialog" *ngIf="showEditModal">
+<div class="modal fade show d-block custom-modal-bg" tabindex="-1" role="dialog" *ngIf="showModal">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="modal-content">
