@@ -39,14 +39,14 @@ export class TransactionsFirebaseService implements TransactionPort {
         if (!docName) return;
 
         const docId = docName.split('/').pop();
-        console.log(docId)
         return {
             id: docId,
             description: doc.fields?.description.stringValue,
             amount: doc.fields?.amount.integerValue || doc.fields?.amount.doubleValue,
             month: doc.fields?.month.stringValue,
             date: doc.fields?.date.stringValue,
-            type: doc.fields?.type.stringValue
+            type: doc.fields?.type.stringValue,
+            status: doc.fields?.status.stringValue
         };
     }
 }

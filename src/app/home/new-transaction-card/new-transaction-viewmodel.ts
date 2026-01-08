@@ -39,7 +39,8 @@ export class NewTransactionViewModel {
             amount: this.selectedOption()?.value === 'income'
                 ? Math.abs(this.numericValue())
                 : -Math.abs(this.numericValue()),
-            month: month
+            month: month,
+            status: 'Ativo'
         };
 
         this.transactionService.registerNewTransaction(newCategory).subscribe({

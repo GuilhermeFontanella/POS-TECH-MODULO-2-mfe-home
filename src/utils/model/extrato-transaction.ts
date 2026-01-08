@@ -5,4 +5,5 @@ export interface Transaction {
   type: 'income' | 'expense' | 'transfer';
   amount: number;
   month: string;
+  status: string;
 }

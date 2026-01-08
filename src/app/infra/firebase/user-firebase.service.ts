@@ -1,30 +1,37 @@
-// import { HttpClient } from "@angular/common/http";
-// import { Injectable } from "@angular/core";
-// import { map, Observable } from "rxjs";
-// import { TransactionPort } from "src/app/home/port/transaction.port";
-// import { environment } from "src/environments/environment";
-// import { Transaction } from "src/utils/model/extrato-transaction";
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, map, Observable, tap } from "rxjs";
+import { UserPort } from "src/app/home/port/user.port";
+import { environment } from "src/environments/environment";
+import { User } from "src/utils/model/user-interface";
 
-// @Injectable({providedIn: 'root'})
-// export class TransactionsFirebaseService implements TransactionPort {
-//     private apiUrl = environment.transactions;
+@Injectable({providedIn: 'root'})
+export class UserFirebaseService implements UserPort {
+    private userSubject = new BehaviorSubject<User | null>(null);
+    public user$ = this.userSubject.asObservable();
 
-//     constructor(private http: HttpClient) {}
+    private apiUrl = environment.users;
 
-//     getTransactions(): Observable<Transaction[]> {
-//         return this.http.get<any>(this.apiUrl).pipe(
-//             map(res => res.documents ?? []),
-//             map(docs => docs.map(this.mapDocumentToTransaction))
-//         );
-//     }
+    constructor(private http: HttpClient) {}
 
-//     private mapDocumentToTransaction(doc: any) {
-//         return {
-//             month: doc.fields.month.stringValue,
-//             categoria: (doc.fields.category?.arrayValue?.values ?? []).map((cat: any) => ({
-//             description: cat.mapValue.fields.description.stringValue,
-//             ammount: Number(cat.mapValue.fields.ammount.integerValue)
-//             }))
-//         };
-//     }
-// }
+    public get currentValue(): User | null {
+        return this.userSubject.value;
+    }
+
+    getUserInfo(uid: string): Observable<User> {
+        return this.http.get<any>(`${this.apiUrl}/${uid}`).pipe(
+            map(doc => this.mapDocumentToUser(doc)),
+            tap(user => {
+                this.userSubject.next(user);
+            })
+        );
+    }
+
+    private mapDocumentToUser(doc: any): User {
+        return {
+            id: doc.name.split('/').pop(),
+            name: doc.fields.name?.stringValue ?? '',
+            email: doc.fields.email?.stringValue
+        }
+    };
+}

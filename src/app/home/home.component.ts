@@ -11,6 +11,7 @@ import { WelcomeCardComponent } from './welcome-card/welcome-card.component';
 import { NewTransactionCardComponent } from './new-transaction-card/new-transaction-card.component';
 import { HomeViewModel } from './home.viewmodel';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { UserFirebaseService } from '../infra/firebase/user-firebase.service';
 
 @Component({
   selector: 'app-home',
@@ -32,7 +33,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NewTransactionCardComponent
   ],
   providers: [
-    HomeViewModel
+    HomeViewModel,
+    UserFirebaseService
   ],
 })
 export class HomeComponent {

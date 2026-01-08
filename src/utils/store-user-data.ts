@@ -1,7 +1,7 @@
-import { IUser } from "./model/user-interface";
+import { User } from "./model/user-interface";
 
 export class UserDataHandler {
-    constructor(private userData?: IUser) {}
+    constructor(private userData?: User) {}
 
     storeData() {
         localStorage.setItem('userData', JSON.stringify(this.userData));
@@ -15,7 +15,7 @@ export class UserDataHandler {
     getUserName() {
         const info = localStorage.getItem('userData');
         if (info) {
-            const userInfo: IUser = JSON.parse(info);
+            const userInfo: User = JSON.parse(info);
             return userInfo.name;
         } else {
             return null;

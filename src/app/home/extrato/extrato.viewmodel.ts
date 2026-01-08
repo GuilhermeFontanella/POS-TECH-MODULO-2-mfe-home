@@ -91,8 +91,6 @@ export class ExtratoViewModel {
 
     saveEdit() {
         if (this.editForm.invalid || !this.editingTransactionId) return;
-        console.log(this.editForm.value.type)
-
         const updateData = {
             ...this.editForm.value,
             id: this.transactionId,
@@ -113,7 +111,16 @@ export class ExtratoViewModel {
     const transaction = this.transactionService.transactions$.getValue().find(t => t.id === transactionId);
     if (!transaction) return;
 
-    this.transactionService.updateTransaction(transaction);
+    const updateData = {
+        ...transaction,
+        status: 'inativo'
+    }
+
+    this.transactionService.updateTransaction(updateData).subscribe({
+        next: () => {
+            this.loadTransactions();
+        }
+    });
   }
 
   formatCurrencyBRL(value: number): string {

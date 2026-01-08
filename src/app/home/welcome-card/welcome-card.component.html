@@ -1,6 +1,6 @@
 <nz-card class="welcomeCard">
   <div>
-      <h2 nz-typography>Olá, {{(vm.userData$ | async)?.name || 'Usuário' }}! :)</h2>
+      <h2 nz-typography>Olá, {{(vm.userAccountInfo$ | async)?.name || 'Usuário' }}! :)</h2>
       <span nz-typography>{{vm.todayDate | date:'EEEE, dd/MM/yyyy':'':'pt-BR'}}</span>
   </div>
   <div class="accountInfo">

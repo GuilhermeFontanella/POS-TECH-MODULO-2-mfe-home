@@ -4,13 +4,15 @@ import { TransactionService } from "src/services/transactionService.service";
 import { ChartService, IChartData } from "../chart/chart.service";
 import { TransactionPort } from "../port/transaction.port";
 import { TRANSACTION } from "../port/transaction.token";
+import { UserFirebaseService } from "src/app/infra/firebase/user-firebase.service";
+import { User } from "src/utils/model/user-interface";
 
 @Injectable()
 export class WelcomeCardViewModel {
     public totalAmmount$ = new BehaviorSubject<number>(0);
-    public userData$ = new BehaviorSubject<{name: string | null}>({name: 'Manoel'});
     public chartData$ = new BehaviorSubject<IChartData | null>(null);
     public transactions$ = this.transactionPort.getTransactions();
+    private uidLogado: string | null = null;
     public todayDate = new Date();
 
     public saldoMensal$ = new BehaviorSubject<number>(0);
@@ -21,19 +23,25 @@ export class WelcomeCardViewModel {
     constructor(
         private transactionService: TransactionService,
         private chartService: ChartService,
-        @Inject(TRANSACTION) private transactionPort: TransactionPort
+        @Inject(TRANSACTION) private transactionPort: TransactionPort,
+        private userFireBaseService: UserFirebaseService
     ) {}
 
     init() {
-        this.loadTransactions();
         this.loadTotalAmmount();
         this.loadSaldoMensal();
         this.loadChartData();
+        this.loadUserInfo();
     }
 
-    private loadTransactions() {
-        this.transactionPort.getTransactions().subscribe({
-            next: (data) => console.log(data)
+    private loadUserInfo() {
+        const user = sessionStorage.getItem('user');
+        if (!user) return;
+
+        const parsedUser = JSON.parse(user) as User;
+
+        this.userFireBaseService.getUserInfo(parsedUser.id).subscribe({
+            next: (value) => this.userAccountInfo$.next(value)
         });
     }
 
