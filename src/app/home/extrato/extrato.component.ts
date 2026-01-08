@@ -63,8 +63,8 @@ export class ExtratoComponent implements OnInit {
     this.vm.clearFilters();
   }
 
-  openEditModal(transactionId: number, categoriaId: number) {
-    this.vm.openEditModal(transactionId, categoriaId);
+  openEditModal(transactionId: number) {
+    this.vm.openEditModal(transactionId);
     this.showModal = true;
   }
 
@@ -77,8 +77,8 @@ export class ExtratoComponent implements OnInit {
     this.vm.saveEdit();
   }
 
-  deleteCategoria(transactionId: number, categoriaId: number) {
-    this.vm.deleteCategoria(transactionId, categoriaId);
+  deleteCategoria(transactionId: number) {
+    this.vm.deleteCategoria(transactionId);
   }
 
   formatCurrencyBRL(value: number): string {

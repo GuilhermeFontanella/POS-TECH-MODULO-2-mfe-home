@@ -2,7 +2,7 @@
   <div class="input-container push-right">
     <label class="label-field">Recibo (opcional)</label>
     <app-upload></app-upload>
-    <div *ngIf="receiptName" class="file-info">
+    <!-- <div *ngIf="receiptName" class="file-info">
       <span style="margin-right: 16px;">
         <span nz-icon nzType="file" nzTheme="outline"></span>
         {{ receiptName }}
@@ -11,11 +11,11 @@
         <span nz-icon nzType="search"></span>
         Ver recibo
       </button>
-    </div>
-    <img *ngIf="isImage && receiptPreviewUrl" [src]="receiptPreviewUrl" alt="Preview do Recibo" class="preview-img" />
+    </div> -->
+    <!-- <img *ngIf="isImage && receiptPreviewUrl" [src]="receiptPreviewUrl" alt="Preview do Recibo" class="preview-img" />
     <div  *ngIf="isPDF && receiptPreviewUrl" class="file-preview">
       <a [href]="receiptPreviewUrl" target="_blank">📄 Visualizar Recibo PDF</a>
-    </div>
+    </div> -->
   </div>
 
   <div>
@@ -28,8 +28,8 @@
     <div class="formContent">
       <nz-select
       class="custom-select"
-        [(ngModel)]="selectedValue"
-
+        [ngModel]="vm.selectedOption"
+        (ngModelChange)="vm.selectedOption.set($event)"
         nzAllowClear
         nzPlaceHolder="Selecione o tipo de transação"
       >
@@ -38,11 +38,11 @@
       <div class="input-container">
         <Label class="label-field" nz-typography>Valor</Label>
         <nz-input-group nzPrefix="R$">
-          <input type="text" class="input-field__number" nz-input (input)="onValueChange($event)" [(ngModel)]="formattedValue" placeholder="input with clear icon" placeholder="00,00" name="valor" />
+          <input type="text" class="input-field__number" nz-input (input)="handleInput($event)" [ngModel]="vm.formattedValue()" placeholder="input with clear icon" placeholder="00,00" name="valor" />
         </nz-input-group>
       </div>
 
-      <button [disabled]="formattedValue.length === 0" nz-button class="btn-primary" (click)="addTransaction()">
+      <button [disabled]="!vm.numericValue()" nz-button class="btn-primary" (click)="submit()">
         Concluir transação
       </button>
     </div>

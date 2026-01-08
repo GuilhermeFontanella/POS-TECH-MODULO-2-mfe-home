@@ -40,37 +40,33 @@
       <div *ngIf="transactions.length > 0; else noResults">
         <div *ngFor="let transaction of transactions">
           <div class="row description">
-            <div class="col-sm-12" *ngIf="transaction.categoria.length > 0">
-              <h3 class="transaction-date">{{ transaction.month | titlecase }} </h3>
+            <h3 class="transaction-date">{{ transaction.month | titlecase }} </h3>
+          </div>
+          <div class="row description">
+            <div class="col-sm-12">
+              <h5 class="transaction-description text">{{ transaction.description }}</h5>
+              <p [ngStyle]="{ color: transaction.amount < 0 ? 'red' : 'inherit' }" class="transaction-amount value">
+                {{ formatCurrencyBRL(transaction.amount) }}
+              </p>
+            </div>
+            <div class="col-sm-8">
+              <div class="aline-button">
+                <div>
+                  <button class="btn btn-outline-warning btn-sm me-1 button"
+                    (click)="openEditModal(transaction.id)">
+                    <span nz-icon nzType="edit" nzTheme="outline"></span></button>
+                </div>
+                <div>
+                  <button class="btn btn-outline-danger btn-sm button margem"
+                    (click)="deleteCategoria(transaction.id)">
+                    <span nz-icon nzType="delete" nzTheme="outline"></span></button>
+                </div>
+              </div>
+              <p class="date">{{ formatDateBR(transaction.date) }}</p>
             </div>
           </div>
-          <div *ngFor="let item of transaction.categoria">
-            <div class="row description">
-              <div class="col-sm-12">
-                <h5 class="transaction-description text">{{ item.description }}</h5>
-                <p [ngStyle]="{ color: item.amount < 0 ? 'red' : 'inherit' }" class="transaction-amount value">
-                  {{ formatCurrencyBRL(item.amount) }}
-                </p>
-              </div>
-              <div class="col-sm-8">
-                <div class="aline-button">
-                  <div>
-                    <button class="btn btn-outline-warning btn-sm me-1 button"
-                      (click)="openEditModal(transaction.id, item.id)">
-                      <span nz-icon nzType="edit" nzTheme="outline"></span></button>
-                  </div>
-                  <div>
-                    <button class="btn btn-outline-danger btn-sm button margem"
-                      (click)="deleteCategoria(transaction.id, item.id)">
-                      <span nz-icon nzType="delete" nzTheme="outline"></span></button>
-                  </div>
-                </div>
-                <p class="date">{{ formatDateBR(item.date) }}</p>
-              </div>
-            </div>
-            <div class="col-sm-12">
-              <div class="line"></div>
-            </div>
+          <div class="col-sm-12">
+            <div class="line"></div>
           </div>
         </div>
       </div>
