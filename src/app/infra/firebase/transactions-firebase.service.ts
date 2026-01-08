@@ -22,7 +22,7 @@ export class TransactionsFirebaseService implements TransactionPort {
 
     updateTransaction(data: any): Observable<any> {
         const firebaseBody = formatToFirestore(data);
-        return this.http.put<any>(environment.transactions, firebaseBody).pipe(
+        return this.http.patch<any>(`${environment.transactions}/${data.id}`, firebaseBody).pipe(
             switchMap(() => this.getTransactions())
         );
     }
@@ -35,8 +35,13 @@ export class TransactionsFirebaseService implements TransactionPort {
     }
 
     private mapDocumentToTransaction(doc: any) {
+        const docName: string = doc.name;
+        if (!docName) return;
+
+        const docId = docName.split('/').pop();
+        console.log(docId)
         return {
-            id: doc.fields?.id.stringValue,
+            id: docId,
             description: doc.fields?.description.stringValue,
             amount: doc.fields?.amount.integerValue || doc.fields?.amount.doubleValue,
             month: doc.fields?.month.stringValue,

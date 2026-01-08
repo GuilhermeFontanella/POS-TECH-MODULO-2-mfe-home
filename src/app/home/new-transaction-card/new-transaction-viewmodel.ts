@@ -32,11 +32,13 @@ export class NewTransactionViewModel {
         }).format(now);
 
         const newCategory: Transaction = {
-            id: Date.now(),
+            id: now.getMilliseconds().toString(),
             description: this.selectedOption()?.label,
             date: now.toString(),
             type: this.selectedOption()?.value,
-            amount: this.numericValue(),
+            amount: this.selectedOption()?.value === 'income'
+                ? Math.abs(this.numericValue())
+                : -Math.abs(this.numericValue()),
             month: month
         };
 

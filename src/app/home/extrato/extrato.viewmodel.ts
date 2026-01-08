@@ -9,7 +9,9 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 export class ExtratoViewModel {
     filteredTransactions$ = new BehaviorSubject<Transaction[]>([]);
     editForm!: FormGroup;
-    filters = {
+    filters!: FormGroup;
+    transactionId: string | null = '';
+    editTransaction = {
         date: '',
         type: null,
         amount: '',
@@ -17,7 +19,7 @@ export class ExtratoViewModel {
         description: ''
     }
 
-    private editingTransactionId: number | null = null;
+    public editingTransactionId: number | null = null;
 
     constructor(
         @Inject(TRANSACTION) private transactionService: TransactionPort,
@@ -30,21 +32,10 @@ export class ExtratoViewModel {
             date: [null, Validators.required],
             month: [null, Validators.required]
         });
-
-        this.editForm.get('type')?.valueChanges.subscribe(value => {
-            const descriptionsMap: Record<string, string> = {
-                income: 'Depósito',
-                expense: 'Despesas',
-                transfer: 'Transferência'
-            };
-            this.editForm.patchValue({
-                description: descriptionsMap[value] || '',
-                type: this.filters.type,
-                ammount: this.filters.amount,
-                date: this.filters.date,
-                month: this.filters.month
-            }, { emitEvent: false });
-        })
+        this.filters = this.fb.group({
+            date: [null],
+            type: [null]
+        });
     }
 
     init() {
@@ -59,37 +50,38 @@ export class ExtratoViewModel {
             error: (err) => console.error('Erro ao buscar as transações do usuário', err)
         });
 
-        this.transactionService.getTransactions().subscribe();
+        //this.transactionService.getTransactions().subscribe();
     }
 
     applyFilters(date?: string, type?: string) {
         const all = this.transactionService.transactions$.getValue();
         const filtered = all.filter(t => {
-            const matchType = !this.filters.type || t.type === this.filters.type
+            const matchType = !this.filters.value.type || t.type === this.filters.value.type
             return matchType;
         });
         this.filteredTransactions$.next(filtered);
     }
 
     clearFilters() {
-        this.filters.type = null;
+        this.filters.value.type = null;
         this.filteredTransactions$.next(this.transactionService.transactions$.getValue());
     }
 
-    openEditModal(transactionId: number) {
+    openEditModal(transactionId: any) {
         const transaction = this.transactionService.transactions$.getValue().find(t => t.id === transactionId);
         if (!transaction) return;
-
+        
+        this.transactionId = transaction?.id as string;
         this.editingTransactionId = transactionId;
         this.editForm.patchValue({
-            description: transaction.description,
-            type: transaction.type,
-            amount: transaction.type === 'income'
-                ? transaction.amount
-                : -transaction.amount,
-            date: transaction.date,
-            month: transaction.month
-        });
+            description: transaction?.description,
+            type: transaction?.type,
+            amount: transaction?.type === 'income'
+                ? transaction?.amount
+                : -transaction?.amount,
+            date: transaction?.date,
+            month: transaction?.month
+        }, { emitEvent: true });
     }
 
     closeEditModal() {
@@ -99,23 +91,29 @@ export class ExtratoViewModel {
 
     saveEdit() {
         if (this.editForm.invalid || !this.editingTransactionId) return;
+        console.log(this.editForm.value.type)
 
         const updateData = {
             ...this.editForm.value,
+            id: this.transactionId,
             amount: this.editForm.value.type === 'income'
                 ? Math.abs(this.editForm.value.amount)
                 : -Math.abs(this.editForm.value.amount)
         }
 
-        this.transactionService.updateTransaction(this.editingTransactionId, updateData).subscribe();
-        this.closeEditModal();
+        this.transactionService.updateTransaction(updateData).subscribe({
+            next: () => {
+                this.closeEditModal();
+                this.loadTransactions();
+            }
+        });
     }
 
-  deleteCategoria(transactionId: number) {
+  deleteCategoria(transactionId: unknown) {
     const transaction = this.transactionService.transactions$.getValue().find(t => t.id === transactionId);
     if (!transaction) return;
 
-    this.transactionService.updateTransaction(transactionId, transaction);
+    this.transactionService.updateTransaction(transaction);
   }
 
   formatCurrencyBRL(value: number): string {

@@ -44,9 +44,9 @@ export class ExtratoComponent implements OnInit {
   vm = inject(ExtratoViewModel);
   showModal: boolean = false;
   optionList = [
-    { label: 'Depósito', value: 'Depósito' },
-    { label: 'Despesa', value: 'Despesas' },
-    { label: 'Transferência', value: 'Transferência' }
+    { label: 'Depósito', value: 'income' },
+    { label: 'DOC/TED', value: 'transfer' },
+    { label: 'Empréstimo e Financiamento', value: 'expense' }
   ];
   editForm = this.vm.editForm;
 
@@ -63,21 +63,21 @@ export class ExtratoComponent implements OnInit {
     this.vm.clearFilters();
   }
 
-  openEditModal(transactionId: number) {
+  openEditModal(transactionId: unknown) {
     this.vm.openEditModal(transactionId);
     this.showModal = true;
   }
 
   closeEditModal() {
-    this.vm.closeEditModal();
     this.showModal = false;
+    this.vm.closeEditModal();
   }
 
   saveEdit() {
     this.vm.saveEdit();
   }
 
-  deleteCategoria(transactionId: number) {
+  deleteCategoria(transactionId: unknown) {
     this.vm.deleteCategoria(transactionId);
   }
 

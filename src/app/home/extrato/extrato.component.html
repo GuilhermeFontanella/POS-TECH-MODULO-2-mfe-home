@@ -1,16 +1,16 @@
 <section class="container">
-  <form class="filters-container" (submit)="applyFilters()">
+  <form [formGroup]="vm.filters" class="filters-container" (submit)="applyFilters()">
     <div class="filters-row">
       <div style="width: 100%;">
         <div class="filter-group">
           <label for="filterDate">Data</label>
-          <input id="filterDate" type="date" [(ngModel)]="vm.filters.date" name="date" />
+          <input id="filterDate" type="date" formControlName="vm.filters.date" name="date" />
         </div>
         <div class="filter-group">
           
           <label for="filterType">Tipo</label>
             <div class="filter-group-button">
-              <nz-select style="width: 178px;" [(ngModel)]="vm.filters.type" name="type">
+              <nz-select style="width: 178px;" formControlName="vm.filters.type" name="type">
                 <nz-option nzValue="" nzLabel="Todos"></nz-option>
                 <nz-option nzValue="income" nzLabel="Depósito"></nz-option>
                 <nz-option nzValue="transfer" nzLabel="Transferência"></nz-option>
@@ -78,16 +78,16 @@
     <p>Nenhuma transação encontrada com os filtros aplicados.</p>
   </div>
 </ng-template>
-<nz-modal [(nzVisible)]="showModal" nzTitle="Editar Transação" [nzContent]="modalContent" [nzFooter]="modalFooter">
+<nz-modal [nzVisible]="vm.editingTransactionId != null" nzTitle="Editar Transação" [nzContent]="modalContent" [nzFooter]="modalFooter">
   <ng-template #modalContent>
     <div tabindex="-1" role="dialog" *ngIf="showModal">
       <div role="document">
         <div class="modal-content">
-          <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="modal-content">
+          <form [formGroup]="vm.editForm" (ngSubmit)="saveEdit()" class="modal-content">
             <input nz-input formControlName="description" type="text" placeholder="Descrição" />
             <nz-select
             class="custom-select"
-            
+            formControlName="type"
             nzAllowClear
             nzPlaceHolder="Selecione o tipo de transação"
             >
@@ -103,7 +103,7 @@
   </ng-template>
   <ng-template #modalFooter>
     <div class="modal-actions">
-      <button nz-button type="submit" [disabled]="editForm.invalid">Salvar</button>
+      <button nz-button type="submit" [disabled]="editForm.invalid" (click)="saveEdit()">Salvar</button>
       <button nz-button nzType="default" type="button" (click)="closeEditModal()">Cancelar</button>
     </div>
   </ng-template>
