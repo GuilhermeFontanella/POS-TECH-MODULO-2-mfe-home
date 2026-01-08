@@ -48,7 +48,7 @@
             <div class="row description">
               <div class="col-sm-12">
                 <h5 class="transaction-description text">{{ item.description }}</h5>
-                <p class="transaction-amount value">
+                <p [ngStyle]="{ color: item.amount < 0 ? 'red' : 'inherit' }" class="transaction-amount value">
                   {{ formatCurrencyBRL(item.amount) }}
                 </p>
               </div>

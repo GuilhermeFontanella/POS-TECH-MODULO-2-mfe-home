@@ -33,7 +33,7 @@ export class TransactionsFirebaseService implements TransactionPort {
             month: doc.fields.month.stringValue,
             categoria: (doc.fields.category?.arrayValue?.values ?? []).map((cat: any) => ({
             description: cat.mapValue.fields.description.stringValue,
-            ammount: Number(cat.mapValue.fields.ammount.integerValue)
+            amount: Number(cat.mapValue.fields.amount.integerValue)
             }))
         };
     }
