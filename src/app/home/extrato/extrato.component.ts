@@ -8,8 +8,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { ExtratoViewModel } from './extrato.viewmodel';
-import { TRANSACTION } from '../port/transaction.token';
-import { TransactionsFirebaseService } from 'src/app/infra/firebase/transactions-firebase.service';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
@@ -35,10 +33,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzInputModule,
     NzModalModule
   ],
-  providers: [
-    ExtratoViewModel,
-    { provide: TRANSACTION, useClass: TransactionsFirebaseService }
-  ]
+  providers: [ExtratoViewModel]
 })
 export class ExtratoComponent implements OnInit {
   vm = inject(ExtratoViewModel);
@@ -51,7 +46,7 @@ export class ExtratoComponent implements OnInit {
   editForm = this.vm.editForm;
 
   ngOnInit(): void {
-      this.vm.init();
+    this.vm.init();
   }
 
   applyFilters(event?: Event) {

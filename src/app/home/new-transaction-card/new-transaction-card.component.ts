@@ -1,17 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { TransactionService } from 'src/services/transactionService.service';
-import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { UploadComponent } from './components/upload/upload.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NewTransactionViewModel } from './new-transaction-viewmodel';
-import { TransactionPort } from '../port/transaction.port';
-import { TransactionsFirebaseService } from 'src/app/infra/firebase/transactions-firebase.service';
 
 @Component({
   selector: 'app-new-transaction-card',
@@ -29,10 +26,7 @@ import { TransactionsFirebaseService } from 'src/app/infra/firebase/transactions
     NzSelectModule,
     NzInputModule,
   ],
-  providers: [
-    NewTransactionViewModel,
-    { provide: TransactionPort, useClass: TransactionsFirebaseService }
-  ]
+  providers: [NewTransactionViewModel]
 })
 export class NewTransactionCardComponent {
   vm = inject(NewTransactionViewModel);

@@ -14,7 +14,9 @@
       <nz-divider class="divider"></nz-divider>
       <div class="ammountInfo">
         <span nz-typography>Conta Corrente</span>
-        <span nz-typography style="font-size: 31px;">{{ showAmmount ? formatCurrencyBRL((vm.totalAmmount$)) : 'R$*******'}}</span>
+        <span nz-typography style="font-size: 31px;">
+          {{ showAmmount ? formatCurrencyBRL((vm.balance$ | async)) : 'R$*******' }}
+        </span>
       </div>
     </div>
   </div>

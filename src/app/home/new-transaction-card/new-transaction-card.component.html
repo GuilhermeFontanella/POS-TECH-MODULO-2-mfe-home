@@ -42,7 +42,7 @@
         </nz-input-group>
       </div>
 
-      <button [disabled]="!vm.numericValue()" nz-button class="btn-primary" (click)="submit()">
+      <button [disabled]="!vm.numericValue() && !vm.selectedOption()" nz-button class="btn-primary" (click)="submit()">
         Concluir transação
       </button>
     </div>

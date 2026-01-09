@@ -1,5 +1,5 @@
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -7,11 +7,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { Chart, registerables } from 'chart.js';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { WelcomeCardViewModel } from './welcome-card.viewmodel';
-import { ChartService } from '../chart/chart.service';
 import { ChartComponent } from '../chart/chart.component';
-import { BehaviorSubject } from 'rxjs';
-import { TRANSACTION } from '../port/transaction.token';
-import { TransactionsFirebaseService } from 'src/app/infra/firebase/transactions-firebase.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 Chart.register(...registerables);
 @Component({
@@ -30,16 +27,14 @@ Chart.register(...registerables);
     OverlayModule,
     ChartComponent
   ],
-  providers: [
-    WelcomeCardViewModel,
-    { provide: TRANSACTION, useClass: TransactionsFirebaseService }
-  ]
+  providers: [WelcomeCardViewModel]
 })
 export class WelcomeCardComponent {
   @ViewChild('chartDesempenho', { static: false }) desempenhoEl!: ElementRef<HTMLCanvasElement>;
   @ViewChild('chartGastos', { static: false }) gastosEl!: ElementRef<HTMLCanvasElement>;
   dashboardVisible = false;
   showAmmount = false;
+  public balance!: Observable<number>;
 
 
   constructor(
@@ -62,8 +57,9 @@ export class WelcomeCardComponent {
     this.showAmmount = !this.showAmmount;
   }
 
-  formatCurrencyBRL(value: BehaviorSubject<number>): string {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value.value);
+  formatCurrencyBRL(value: number | null): string {
+    const amount = value ?? 0;
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(amount);
   }
 
   formatDateBR(dateInput: string | number): string {

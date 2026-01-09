@@ -1,7 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Chart } from "chart.js";
-import { map, Observable, of, take } from "rxjs";
-import { TransactionService } from "src/services/transactionService.service";
+import { Observable, of } from "rxjs";
 
 export interface IChartData {
     desempenho: { labels: string[]; valores: number[] };

@@ -1,21 +1,67 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, map, Observable, switchMap, tap } from "rxjs";
+import { inject, Injectable } from "@angular/core";
+import { BehaviorSubject, filter, map, Observable, switchMap, take, tap } from "rxjs";
 import { TransactionPort } from "src/app/home/port/transaction.port";
 import { environment } from "src/environments/environment";
 import { formatToFirestore } from "src/utils/functions/format-to-firebase-store";
 import { Transaction } from "src/utils/model/extrato-transaction";
+import { UserFirebaseService } from "./user-firebase.service";
+import { BalanceFirebaseService } from "./balance-firebase.service";
 
 @Injectable({providedIn: 'root'})
 export class TransactionsFirebaseService implements TransactionPort {
     public transactions$ = new BehaviorSubject<Transaction[]>([]);
+    private userService = inject(UserFirebaseService);
+    private balanceService = inject(BalanceFirebaseService);
 
     constructor(private http: HttpClient) {}
 
     getTransactions(): Observable<Transaction[]> {
-        return this.http.get<any>(environment.transactions).pipe(
-            map(res => res.documents ?? []),
-            map(docs => docs.map(this.mapDocumentToTransaction)),
+        return this.userService.user$.pipe(
+            filter(user => !!user?.id),
+            take(1),
+            switchMap(user => {
+                const url = `${environment.baseUrl}:runQuery`;
+                const body = {
+                    structuredQuery: {
+                        from: [{collectionId: 'transactions'}],
+                        where: {
+                            compositeFilter: {
+                                op: 'AND',
+                                filters: [
+                                    {
+                                        fieldFilter: {
+                                            field: { fieldPath: 'userId' },
+                                            op: 'EQUAL',
+                                            value: { stringValue: user!.id }
+                                        }
+                                    },
+                                    {
+                                        fieldFilter: {
+                                            field: { fieldPath: 'status' },
+                                            op: 'EQUAL',
+                                            value: { stringValue: 'ativo' }
+                                        }
+                                    },
+                                ]
+                            }
+                            
+                        }
+                    }
+                };
+                return this.http.post<any>(url, body).pipe(
+                    map(res => res.filter((item: any) => item.document).map((item: any) => item.document)),
+                    map(docs => docs.map((doc: any) => this.mapDocumentToTransaction(doc))),
+                    tap(transactions => {
+                        const rawBalance = transactions.reduce((acc: number, t: any) => {
+                            const amount = typeof t.amount === 'string' ? parseFloat(t.amount) : t.amount;
+                            return acc + (amount || 0);
+                        }, 0);
+                        const totalBalance = Number(rawBalance.toFixed(2));
+                        this.balanceService.updateBalance(user!.id, totalBalance).subscribe();
+                    })
+                );
+            }),
             tap(data => this.transactions$.next(data))
         );
     }

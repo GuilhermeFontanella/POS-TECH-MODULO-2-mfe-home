@@ -1,12 +1,13 @@
-import { Inject, Injectable } from "@angular/core";
+import { Inject, Injectable, OnDestroy } from "@angular/core";
 import { TRANSACTION } from "../port/transaction.token";
 import { TransactionPort } from "../port/transaction.port";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject, takeUntil } from "rxjs";
 import { Transaction } from "src/utils/model/extrato-transaction";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Injectable()
-export class ExtratoViewModel {
+export class ExtratoViewModel implements OnDestroy {
+    private destroy$ = new Subject<void>();
     filteredTransactions$ = new BehaviorSubject<Transaction[]>([]);
     editForm!: FormGroup;
     filters!: FormGroup;
@@ -38,22 +39,32 @@ export class ExtratoViewModel {
         });
     }
 
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
     init() {
+        this.transactionService.transactions$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(data => {
+                this.filteredTransactions$.next(data);
+                this.applyFilters();
+            });
         this.loadTransactions();
     }
 
     private loadTransactions() {
-        this.transactionService.getTransactions().subscribe({
-            next: (data) => {
+        this.transactionService.transactions$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(data => {
                 this.filteredTransactions$.next(data);
-            },
-            error: (err) => console.error('Erro ao buscar as transações do usuário', err)
-        });
+            });
 
-        //this.transactionService.getTransactions().subscribe();
+        this.transactionService.getTransactions().subscribe();
     }
 
-    applyFilters(date?: string, type?: string) {
+    applyFilters() {
         const all = this.transactionService.transactions$.getValue();
         const filtered = all.filter(t => {
             const matchType = !this.filters.value.type || t.type === this.filters.value.type

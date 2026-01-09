@@ -1,4 +1,5 @@
 export interface Transaction {
+  userId: string;
   id: unknown;
   description: string;
   date: string;

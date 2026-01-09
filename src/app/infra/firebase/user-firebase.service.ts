@@ -34,4 +34,8 @@ export class UserFirebaseService implements UserPort {
             email: doc.fields.email?.stringValue
         }
     };
+
+    setUser(user: User) {
+        this.userSubject.next(user);
+    }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -34,9 +34,21 @@ import { UserFirebaseService } from '../infra/firebase/user-firebase.service';
   ],
   providers: [
     HomeViewModel,
-    UserFirebaseService
   ],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   vm = inject(HomeViewModel);
+  private userService = inject(UserFirebaseService);
+
+  ngOnInit(): void {
+      this.hydrateUser();
+  }
+
+  private hydrateUser(): void {
+    const sessionData = sessionStorage.getItem('user');
+    if (sessionData) {
+      const user = JSON.parse(sessionData);
+      this.userService.setUser(user);
+    }
+  }
 }
